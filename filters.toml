@@ -125,5 +125,56 @@ queryOr = [
 "list:fulldisclosure@seclists.org"
 "list:maintainers@dockerproject.org"
 "list:debian-security-announce@lists.debian.org"
+"list:docker-maint@lists.alioth.debian.org"
+"list:debian-women@lists.debian.org"
+"list:debian-dug-nyc@lists.debian.org"
+"list:programming@linuxchix.org"
+"list:mailman@linuxchix.org"
+"list:golang-devexp@googlegroups.com"
+"list:tor-dev@lists.torproject.org"
+"list:tor-announce@lists.torproject.org"
+"list:tor-meeting@lists.torproject.org"
+"list:linux-kernel-announce@vger.kernel.org"
+"list:dev@opencontainers.org"
+"list:security-dev@chromium.org"
+"list:golang-announce@googlegroups.com"
+"list:golang-dev@googlegroups.com"
+"list:go-package-management@googlegroups.com"
+"list:dev@lists.clearlinux.org"
+"list:kubernetes-security-announce@googlegroups.com"
+"list:kubernetes-security@googlegroups.com"
+"list:kubernetes-security-discuss@googlegroups.com"
+"list:security@kubernetes.io"
+"list:security-discuss-private@kubernetes.io"
+"list:security-release-team@kubernetes.io"
+"list:syzkaller@googlegroups.com"
+"list:kubernetes-dev@googlegroups.com"
+"list:kubernetes-maintainers@googlegroups.com"
+"list:kubernetes-announce@googlegroups.com"
+"list:kubernetes-distributors-announce@googlegroups.com"
+"list:kubernetes-sig-node@googlegroups.com"
+"list:kubernetes-sig-auth@googlegroups.com"
+"list:kubernetes-wg-multitenancy@googlegroups.com"
+"list:cncf-toc@lists.cncf.io list:security@kubernetes.io"
+"list:kubernetes-sig-architecture@googlegroups.com"
+"list:kubernetes-wg-container-identity@googlegroups.com"
 ]
 label = "participating/mailing-list"
+toMe = true
+
+[[filter]]
+query = "list:kubernetes-security-announce@googlegroups.com"
+label = "Mailing Lists/kubernetes-security-announce"
+
+[[filter]]
+queryOr = [
+"list:kubernetes-security@googlegroups.com"
+"list:kubernetes-security-discuss@googlegroups.com"
+"list:security-discuss-private@kubernetes.io"
+"list:security-release-team@kubernetes.io"
+"list:security@kubernetes.io"
+]
+label = "Mailing Lists/kubernetes-security"
+
+[[filter]]
+query =
