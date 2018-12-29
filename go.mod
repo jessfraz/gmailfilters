@@ -1,4 +1,6 @@
-module github.com/jessfraz/gmailfilterb0t
+module github.com/jessfraz/gmailfilters
+
+replace github.com/Sirupsen/logrus => github.com/sirupsen/logrus v1.2.0
 
 require (
 	cloud.google.com/go v0.34.0 // indirect
