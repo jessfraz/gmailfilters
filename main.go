@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"os"
 	"os/signal"
-	"os/user"
 	"syscall"
 
 	"github.com/genuinetools/pkg/cli"
@@ -113,17 +112,4 @@ func main() {
 
 	// Run our program.
 	p.Run()
-}
-
-func getHome() (string, error) {
-	home := os.Getenv(homeKey)
-	if home != "" {
-		return home, nil
-	}
-
-	u, err := user.Current()
-	if err != nil {
-		return "", err
-	}
-	return u.HomeDir, nil
 }
