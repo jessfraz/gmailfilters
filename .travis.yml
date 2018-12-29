@@ -1,0 +1,58 @@
+language: go
+sudo: false
+go:
+  - 1.10.x
+before_install:
+  - go get golang.org/x/lint/golint
+  - go get honnef.co/go/tools/cmd/staticcheck
+jobs:
+  include:
+    - script: make all
+    - stage: Run Test Coverage
+      script: make cover
+      after_success: bash <(curl -s https://codecov.io/bash)
+    - stage: Build Release
+      script:
+        - make release
+        - echo "Deploying to GitHub releases ..."
+      deploy:
+        provider: releases
+        file:
+          - cross/gmailfilterb0t-darwin-amd64
+          - cross/gmailfilterb0t-darwin-amd64.md5
+          - cross/gmailfilterb0t-darwin-amd64.sha256
+          - cross/gmailfilterb0t-darwin-386
+          - cross/gmailfilterb0t-darwin-386.md5
+          - cross/gmailfilterb0t-darwin-386.sha256
+          - cross/gmailfilterb0t-freebsd-amd64
+          - cross/gmailfilterb0t-freebsd-amd64.md5
+          - cross/gmailfilterb0t-freebsd-amd64.sha256
+          - cross/gmailfilterb0t-freebsd-386
+          - cross/gmailfilterb0t-freebsd-386.md5
+          - cross/gmailfilterb0t-freebsd-386.sha256
+          - cross/gmailfilterb0t-linux-arm
+          - cross/gmailfilterb0t-linux-arm.md5
+          - cross/gmailfilterb0t-linux-arm.sha256
+          - cross/gmailfilterb0t-linux-arm64
+          - cross/gmailfilterb0t-linux-arm64.md5
+          - cross/gmailfilterb0t-linux-arm64.sha256
+          - cross/gmailfilterb0t-linux-amd64
+          - cross/gmailfilterb0t-linux-amd64.md5
+          - cross/gmailfilterb0t-linux-amd64.sha256
+          - cross/gmailfilterb0t-linux-386
+          - cross/gmailfilterb0t-linux-386.md5
+          - cross/gmailfilterb0t-linux-386.sha256
+          - cross/gmailfilterb0t-solaris-amd64
+          - cross/gmailfilterb0t-solaris-amd64.md5
+          - cross/gmailfilterb0t-solaris-amd64.sha256
+          - cross/gmailfilterb0t-windows-amd64
+          - cross/gmailfilterb0t-windows-amd64.md5
+          - cross/gmailfilterb0t-windows-amd64.sha256
+          - cross/gmailfilterb0t-windows-386
+          - cross/gmailfilterb0t-windows-386.md5
+          - cross/gmailfilterb0t-windows-386.sha256
+        skip_cleanup: true
+        on:
+          tags: true
+        api_key:
+          secure: "L46qpYtTAKzdg82kkUvIP8MZKT58PwU6bEXUEJFkSoLzTKX+M3WEdECXc5iSrKiuUdOaZp5D289g1kCRLcbSR4ECHBLip8QAj0ZdfR8ru3F/rTYomgN31liuTnQ8weldOEUT3cB9VLiALxaXC6ViEb0mPegRGRd+9j55fHGgbXDvEJC/1ILN7+CwMEsKgricD2wwIvQzMhgk9FPTl8y29QjcKdMkRDVEr8fKFiyvWnKCsxzCZE1xzX+jz3eHTN2Zo4/bzNATNN7GN55AcNHQv7mvqzPfE5zZ+VS2etlSzvgO31w35Mec/lHY8tL1Fr4XRK0hDbXgMhbRbBXv2egvVRAumZfiZIzW6wJPMKLR7groF0xRMkdENIxo56qxj2//zMn9MozHTxcXl44kHi19KSudCmLJVTgqWmlpVK+I+yuJgHjSFFi8Q+L5nh7Dqh9RtxQDu8RcVtYnxfeAVMF0mcduRjuXVBhaN8cxiADLyorVegFyEkbo/XJcG3L1mOCY+U/DtAXh2r+KAH3HHpjOUY23hSoseGVXsGICW/vKys61HyOnrIsSkdMDUYwvk/fIclUWqtQqMIPML6mN4+nxiulEQHo31lifxR+mUwhKSPWvJ5DILYqN/r5pekUvrn4q/n6VrR/3bsnzEaCs1rouSNmfifEfJJIPfK6UEzLlUwU="
