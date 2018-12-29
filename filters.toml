@@ -10,7 +10,7 @@ label = "github/LGTM"
 [[filter]]
 query = """
 (-to:team_mention@noreply.github.com \
- (from:(notifications@github.com) AND (@jfrazelle OR @jessfraz OR to:mention@noreply.github.com OR to:author@noreply.github.com OR to:assign@noreply.github.com)))
+(from:(notifications@github.com) AND (@jfrazelle OR @jessfraz OR to:mention@noreply.github.com OR to:author@noreply.github.com OR to:assign@noreply.github.com)))
 """
 label = "participating/github"
 
@@ -34,7 +34,96 @@ label = "github"
 
 [[filter]]
 queryOr = [
-	"to:acm@jessfraz.com",
-	"to:ACM-W-PUBLIC@listserv.acm.org"
+"to:acm@jessfraz.com",
+"to:ACM-W-PUBLIC@listserv.acm.org"
 ]
 label = "Tech Things/ACM"
+
+[[filter]]
+queryOr = [
+"to:plans@tripit.com"
+"to:receipts@concur.com"
+"to:plans@concur.com"
+"to:receipts@expensify.com"
+"to:distribution+managers@dockerproject.org"
+"to:organizers+managers@maintainerati.org"
+]
+delete = true
+
+[[filter]]
+queryOr = [
+"from:notifications@docker.com"
+"from:noreply@github.com"
+"to:gandi@jessfraz.com"
+"from:no-reply@alertsp.chase.com"
+"from:team@mint.com"
+"from:support@rackspace.com"
+"from:builds@circleci.com"
+"from:notify@jessfraz.com"
+"from:jenkins@jessfraz.com"
+"from:watchtower@jessfraz.com"
+"from:checkup@jessfraz.com"
+"from:support@tripit.com"
+"from:nas@jessfraz.com"
+"to:nas@jessfraz.com"
+"to:racked@jessfraz.com"
+"from:auto-confirm@amazon.com"
+"from:shipment-tracking@amazon.com"
+"from:orders@eat.seamless.com"
+"from:orders@instacart.com"
+"from:no-reply@postmates.com"
+"from:expiry@letsencrypt.org"
+"from:do_not_reply@itunes.com"
+"from:digital-no-reply@amazon.com"
+"from:no-reply@slack.com"
+"from:billing@mailgun.net"
+"from:payments-noreply@google.com"
+"from:notify@keybase.io"
+"from:uber.us@uber.com"
+"from:no-reply@alertsp.chase.com"
+"from:googlealerts-noreply@google.com"
+"from:no-reply@opentable.com"
+"from:hello@aspergerexperts.com"
+"from:grvfh@aol.com"
+"from:onlinebanking@ealerts.bankofamerica.com"
+"from:noreply@backup.api.rackspacecloud.com"
+"from:gogo@e.gogoair.com"
+"from:googlestore-noreply@google.com"
+"from:notifications@n.massdrop.com"
+"from:no-reply-aws@amazon.com"
+"from:donotreply@rxorder.walgreens.com"
+"from:ChaseDoNotReply@transunion.com"
+"from:RapidRewards@luv.southwest.com"
+"from:venmo@venmo.com"
+"from:billpay@billpay.bankofamerica.com"
+"from:ConEd-bill@emailconed.com"
+"from:noreply@mail.bloombergbusiness.com"
+"from:no_reply@email.apple.com"
+"from:gsuite-noreply@google.com"
+"from:no-reply@accounts.google.com"
+"from:order-update@amazon.com"
+"from:support@flycleaners.com"
+"from:mailgun@jessfraz.com"
+"from:DeltaAirLines@e.delta.com"
+"from:opsgenie@opsgenie.net"
+"from:medteam@onemedical.com"
+"from:no-reply@dropbox.com"
+]
+label = "to-be-deleted"
+
+[[filter]]
+query = "drive-shares-noreply@google.com OR (subject:\"Invitation to comment\" AND from:me ) OR from:(*@docs.google.com)"
+label = "to-be-deleted"
+
+[[filter]]
+query = "(from:(-me) {filename:vcs filename:ics} has:attachment) OR (subject:(\"invitation\" OR \"accepted\" OR \"tentatively accepted\" OR \"rejected\" OR \"updated\" OR \"canceled event\" OR \"declined\") when where calendar who organizer)"
+label = "to-be-deleted"
+
+[[filter]]
+queryOr = [
+"list:oss-security@lists.openwall.com"
+"list:fulldisclosure@seclists.org"
+"list:maintainers@dockerproject.org"
+"list:debian-security-announce@lists.debian.org"
+]
+label = "participating/mailing-list"
