@@ -15,6 +15,14 @@ A tool to sync Gmail filters from a config file to your account.
 
 <!-- toc -->
 
+- [Installation](#installation)
+    + [Binaries](#binaries)
+    + [Via Go](#via-go)
+- [Usage](#usage)
+- [Example Filter File](#example-filter-file)
+- [Setup](#setup)
+  * [Gmail](#gmail)
+
 <!-- tocstop -->
 
 ## Installation
