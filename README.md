@@ -10,6 +10,7 @@ A tool to sync Gmail filters from a config file to your account.
    * [Binaries](README.md#binaries)
    * [Via Go](README.md#via-go)
 * [Usage](README.md#usage)
+* [Example Filter File](README.md#example-filter-file)
 * [Setup](README.md#setup)
    * [Gmail](README.md#gmail)
 
@@ -41,6 +42,78 @@ Flags:
 Commands:
 
   version  Show the version information.
+```
+
+## Example File
+
+```toml
+[[filter]]
+query = "to:your_activity@noreply.github.com"
+archive = true
+read = true
+
+[[filter]]
+query = "from:notifications@github.com LGTM"
+label = "github/LGTM"
+
+[[filter]]
+query = """
+(-to:team_mention@noreply.github.com \
+(from:(notifications@github.com) AND (@jfrazelle OR @jessfraz OR to:mention@noreply.github.com OR to:author@noreply.github.com OR to:assign@noreply.github.com)))
+"""
+label = "github/mentions"
+
+[[filter]]
+query = """
+to:team_mention@noreply.github.com \
+-to:mention@noreply.github.com \
+-to:author@noreply.github.com \
+-to:assign@noreply.github.com
+"""
+label = "github/team-mention"
+
+[[filter]]
+query = """
+from:notifications@github.com \
+-to:team_mention@noreply.github.com \
+-to:mention@noreply.github.com \
+-to:author@noreply.github.com \
+-to:assign@noreply.github.com
+"""
+archive = true
+
+[[filter]]
+query = "(from:me AND to:reply@reply.github.com)"
+label = "github/mentions"
+
+[[filter]]
+query = "(from:notifications@github.com)"
+label = "github"
+
+[[filter]]
+queryOr = [
+"to:plans@tripit.com",
+"to:receipts@concur.com",
+"to:plans@concur.com",
+"to:receipts@expensify.com"
+]
+delete = true
+
+[[filter]]
+queryOr = [
+"from:notifications@docker.com",
+"from:noreply@github.com",
+"from:builds@travis-ci.org"
+]
+label = "to-be-deleted"
+
+[[filter]]
+query = "drive-shares-noreply@google.com OR (subject:\"Invitation to comment\" AND from:me ) OR from:(*@docs.google.com)"
+label = "to-be-deleted"
+
+[[filter]]
+query = "(from:(-me) {filename:vcs filename:ics} has:attachment) OR (subject:(\"invitation\" OR \"accepted\" OR \"tentatively accepted\" OR \"rejected\" OR \"updated\" OR \"canceled event\" OR \"declined\") when where calendar who organizer)"
+label = "to-be-deleted"
 ```
 
 ## Setup
