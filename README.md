@@ -114,6 +114,19 @@ label = "to-be-deleted"
 [[filter]]
 query = "(from:(-me) {filename:vcs filename:ics} has:attachment) OR (subject:(\"invitation\" OR \"accepted\" OR \"tentatively accepted\" OR \"rejected\" OR \"updated\" OR \"canceled event\" OR \"declined\") when where calendar who organizer)"
 label = "to-be-deleted"
+
+[[filter]]
+query = "list:coreos-dev@googlegroups.com"
+label = "Mailing Lists/coreos-dev"
+archiveUnlessToMe = true
+
+[[filter]]
+queryOr = [
+"list:xdg-app@lists.freedesktop.org",
+"list:flatpak@lists.freedesktop.org"
+]
+label = "Mailing Lists/xdg-apps"
+archiveUnlessToMe = true
 ```
 
 ## Setup

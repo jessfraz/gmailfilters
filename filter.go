@@ -18,12 +18,14 @@ type filterfile struct {
 
 // filter defines a filter object.
 type filter struct {
-	Query   string
-	QueryOr []string
-	Archive bool
-	Read    bool
-	Delete  bool
-	Label   string
+	Query             string
+	QueryOr           []string
+	Archive           bool
+	Read              bool
+	Delete            bool
+	ToMe              bool
+	ArchiveUnlessToMe bool
+	Label             string
 }
 
 func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
@@ -67,14 +69,37 @@ func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
 		action.AddLabelIds = append(action.AddLabelIds, "TRASH")
 	}
 
-	filters := []gmail.Filter{
-		{
-			Action: &action,
-			Criteria: &gmail.FilterCriteria{
-				Query: f.Query,
-			},
-		},
+	criteria := gmail.FilterCriteria{
+		Query: f.Query,
 	}
+	if f.ToMe || f.ArchiveUnlessToMe {
+		criteria.To = "me"
+	}
+
+	filter := gmail.Filter{
+		Action:   &action,
+		Criteria: &criteria,
+	}
+	filters := []gmail.Filter{
+		filter,
+	}
+
+	// If we need to archive unless to them, then add the additional filter.
+	if f.ArchiveUnlessToMe {
+		filter.Criteria = &gmail.FilterCriteria{
+			Query:        f.Query,
+			To:           "",
+			NegatedQuery: "to:me",
+		}
+
+		// Archive it.
+		action.RemoveLabelIds = append(action.RemoveLabelIds, "INBOX")
+		filter.Action = &action
+
+		// Append the extra filter.
+		filters = append(filters, filter)
+	}
+
 	return filters, nil
 }
 
