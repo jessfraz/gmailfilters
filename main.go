@@ -114,16 +114,22 @@ func main() {
 		if err != nil {
 			return err
 		}
-		fmt.Printf("labels: %#v\n\n", labels)
 
 		filters, err := decodeFile(args[0])
 		if err != nil {
 			return err
 		}
-		fmt.Printf("file: %#v\n\n", filters)
 
-		if err := getExistingFilters(); err != nil {
+		// Delete our existing filters.
+		if err := deleteExistingFilters(); err != nil {
 			return err
+		}
+
+		// Convert our filters into gmail filters and add them.
+		for _, f := range filters {
+			if err := f.addFilter(); err != nil {
+				return err
+			}
 		}
 
 		return nil
@@ -131,20 +137,4 @@ func main() {
 
 	// Run our program.
 	p.Run()
-}
-
-func getExistingFilters() error {
-	// Get current filters for the user.
-	l, err := api.Users.Settings.Filters.List(gmailUser).Do()
-	if err != nil {
-		return fmt.Errorf("listing filters failed: %v", err)
-	}
-
-	// Iterate over the filters.
-	for _, f := range l.Filter {
-		fmt.Printf("Action: %#v\n", f.Action)
-		fmt.Printf("Criteria: %#v\n\n", f.Criteria)
-	}
-
-	return nil
 }
