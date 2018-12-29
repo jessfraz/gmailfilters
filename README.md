@@ -10,6 +10,8 @@
    * [Binaries](README.md#binaries)
    * [Via Go](README.md#via-go)
 * [Usage](README.md#usage)
+* [Setup](README.md#setup)
+   * [Gmail](README.md#gmail)
 
 ## Installation
 
@@ -33,11 +35,22 @@ Usage: gmailfilterb0t <command>
 
 Flags:
 
-  -d, --debug  enable debug logging (default: false)
-  --interval   update interval (ex. 5ms, 10s, 1m, 3h) (default: 18h0m0s)
-  --once       run once and exit, do not run as a daemon (default: false)
+  -d, --debug      enable debug logging (default: false)
+  --gmail-keyfile  Path to GMail keyfile (default: /home/jessie/.gmailfilterb0t/gmail.json)
 
 Commands:
 
   version  Show the version information.
 ```
+
+## Setup
+
+### Gmail
+
+1. Enable the API: To get started using Gmail API, you need to 
+    first create a project in the 
+    [Google API Console](https://console.developers.google.com),
+    enable the API, and create credentials.
+
+    Follow the instructions 
+    [for step enabling the API here](https://developers.google.com/gmail/api/quickstart/go).
