@@ -4,7 +4,7 @@
 [![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/jessfraz/gmailfilterb0t)
 [![Github All Releases](https://img.shields.io/github/downloads/jessfraz/gmailfilterb0t/total.svg?style=for-the-badge)](https://github.com/jessfraz/gmailfilterb0t/releases)
 
-{DESCRIPTION}
+A tool to sync Gmail filters from a config file to your account.
 
 * [Installation](README.md#installation)
    * [Binaries](README.md#binaries)
@@ -29,7 +29,7 @@ $ go get github.com/jessfraz/gmailfilterb0t
 
 ```console
 $ gmailfilterb0t -h
-gmailfilterb0t -  A bot to sync gmail filters from a config file to your account.
+gmailfilterb0t -  A tool to sync Gmail filters from a config file to your account.
 
 Usage: gmailfilterb0t <command>
 

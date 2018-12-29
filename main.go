@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/BurntSushi/toml"
 	"github.com/genuinetools/pkg/cli"
 	"github.com/jessfraz/gmailfilterb0t/version"
 	"github.com/sirupsen/logrus"
@@ -19,6 +20,7 @@ import (
 
 const (
 	tokenFile = "/tmp/token.json"
+	gmailUser = "me"
 )
 
 var (
@@ -33,7 +35,7 @@ func main() {
 	// Create a new cli program.
 	p := cli.NewProgram()
 	p.Name = "gmailfilterb0t"
-	p.Description = "A bot to sync gmail filters from a config file to your account"
+	p.Description = "A tool to sync Gmail filters from a config file to your account"
 	// Set the GitCommit and Version.
 	p.GitCommit = version.GITCOMMIT
 	p.Version = version.VERSION
@@ -65,7 +67,7 @@ func main() {
 		// Read the credentials file.
 		b, err := ioutil.ReadFile(credsFile)
 		if err != nil {
-			logrus.Fatalf("reading client secret file %s failed: %v", credsFile, err)
+			return fmt.Errorf("reading client secret file %s failed: %v", credsFile, err)
 		}
 
 		// If modifying these scopes, delete your previously saved token.json.
@@ -73,19 +75,19 @@ func main() {
 			// Read, modify, and manage your settings.
 			gmail.GmailSettingsBasicScope)
 		if err != nil {
-			logrus.Fatalf("parsing client secret file to config failed: %v", err)
+			return fmt.Errorf("parsing client secret file to config failed: %v", err)
 		}
 
 		// Get the client from the config.
 		client, err := getClient(ctx, config)
 		if err != nil {
-			logrus.Fatalf("creating client failed: %v", err)
+			return fmt.Errorf("creating client failed: %v", err)
 		}
 
 		// Create the service for the Gmail client.
 		api, err = gmail.New(client)
 		if err != nil {
-			logrus.Fatalf("creating Gmail client failed: %v", err)
+			return fmt.Errorf("creating Gmail client failed: %v", err)
 		}
 
 		return nil
@@ -107,9 +109,49 @@ func main() {
 			}
 		}()
 
+		filters, err := decodeFile(args[0])
+		if err != nil {
+			return err
+		}
+		fmt.Printf("file: %#v\n\n", filters)
+
+		if err := getExistingFilters(); err != nil {
+			return err
+		}
+
 		return nil
 	}
 
 	// Run our program.
 	p.Run()
+}
+
+func decodeFile(file string) ([]Filter, error) {
+	b, err := ioutil.ReadFile(file)
+	if err != nil {
+		return nil, fmt.Errorf("reading filter file %s failed: %v", file, err)
+	}
+
+	var ff filterfile
+	if _, err := toml.Decode(string(b), &ff); err != nil {
+		return nil, fmt.Errorf("decoding toml failed: %v", err)
+	}
+
+	return ff.Filters, nil
+}
+
+func getExistingFilters() error {
+	// Get current filters for the user.
+	l, err := api.Users.Settings.Filters.List(gmailUser).Do()
+	if err != nil {
+		return fmt.Errorf("listing filters failed: %v", err)
+	}
+
+	// Iterate over the filters.
+	for _, f := range l.Filter {
+		fmt.Printf("Action: %#v\n", f.Action)
+		fmt.Printf("Criteria: %#v\n\n", f.Criteria)
+	}
+
+	return nil
 }
