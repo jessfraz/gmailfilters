@@ -94,9 +94,11 @@ func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
 			NegatedQuery: "to:me",
 		}
 
+		// Copy the action.
+		archiveAction := action
 		// Archive it.
-		action.RemoveLabelIds = append(action.RemoveLabelIds, "INBOX")
-		archiveIfNotToMeFilter.Action = &action
+		archiveAction.RemoveLabelIds = append(action.RemoveLabelIds, "INBOX")
+		archiveIfNotToMeFilter.Action = &archiveAction
 
 		// Append the extra filter.
 		filters = append(filters, archiveIfNotToMeFilter)
