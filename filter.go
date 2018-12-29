@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
+	"github.com/Sirupsen/logrus"
 	"google.golang.org/api/gmail/v1"
 )
 
@@ -85,8 +86,12 @@ func (f filter) addFilter(labels *labelMap) error {
 	}
 
 	// Add the filters.
-	for _, filter := range filters {
-		if _, err := api.Users.Settings.Filters.Create(gmailUser, &filter).Do(); err != nil {
+	for _, fltr := range filters {
+		logrus.WithFields(logrus.Fields{
+			"action":   fmt.Sprintf("%#v", fltr.Action),
+			"criteria": fmt.Sprintf("%#v", fltr.Criteria),
+		}).Debug("adding Gmail filter")
+		if _, err := api.Users.Settings.Filters.Create(gmailUser, &fltr).Do(); err != nil {
 			return fmt.Errorf("creating filter failed: %v", err)
 		}
 	}

@@ -115,6 +115,7 @@ func main() {
 			return err
 		}
 
+		fmt.Printf("Decoding filters from file %s\n", args[0])
 		filters, err := decodeFile(args[0])
 		if err != nil {
 			return err
@@ -126,11 +127,14 @@ func main() {
 		}
 
 		// Convert our filters into gmail filters and add them.
+		fmt.Printf("Updating %d filters, this might take a bit...\n", len(filters))
 		for _, f := range filters {
 			if err := f.addFilter(&labels); err != nil {
 				return err
 			}
 		}
+
+		fmt.Printf("Successfully updated %d filters\n", len(filters))
 
 		return nil
 	}
