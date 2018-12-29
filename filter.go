@@ -57,7 +57,7 @@ func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
 	}
 
 	action.RemoveLabelIds = []string{}
-	if f.Archive {
+	if f.Archive && !f.ArchiveUnlessToMe {
 		action.RemoveLabelIds = append(action.RemoveLabelIds, "INBOX")
 	}
 
@@ -86,7 +86,9 @@ func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
 
 	// If we need to archive unless to them, then add the additional filter.
 	if f.ArchiveUnlessToMe {
-		filter.Criteria = &gmail.FilterCriteria{
+		// Copy the filter.
+		archiveIfNotToMeFilter := filter
+		archiveIfNotToMeFilter.Criteria = &gmail.FilterCriteria{
 			Query:        f.Query,
 			To:           "",
 			NegatedQuery: "to:me",
@@ -94,10 +96,10 @@ func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
 
 		// Archive it.
 		action.RemoveLabelIds = append(action.RemoveLabelIds, "INBOX")
-		filter.Action = &action
+		archiveIfNotToMeFilter.Action = &action
 
 		// Append the extra filter.
-		filters = append(filters, filter)
+		filters = append(filters, archiveIfNotToMeFilter)
 	}
 
 	return filters, nil
