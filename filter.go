@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 	"google.golang.org/api/gmail/v1"
@@ -24,31 +25,68 @@ type filter struct {
 	Label   string
 }
 
-func (f filter) toGmailFilters() ([]gmail.Filter, error) {
+func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
 	// Convert the filter into a gmail filters.
 	if len(f.Query) > 0 && len(f.QueryOr) > 0 {
 		return nil, errors.New("cannot have both a query and a queryOr")
 	}
 
+	if len(f.QueryOr) > 0 {
+		// Create the OR query.
+		f.Query = strings.Join(f.QueryOr, " OR ")
+	}
+
+	if len(f.Query) < 1 {
+		return nil, errors.New("query or queryOr cannot be empty")
+	}
+
+	action := gmail.FilterAction{
+		AddLabelIds:    []string{},
+		RemoveLabelIds: []string{},
+	}
+	if len(f.Label) > 0 {
+		// Create the label if it does not exist.
+		labelID, err := labels.createLabelIfDoesNotExist(f.Label)
+		if err != nil {
+			return nil, err
+		}
+		action.AddLabelIds = append(action.AddLabelIds, labelID)
+	}
+
+	action.RemoveLabelIds = []string{}
+	if f.Archive {
+		action.RemoveLabelIds = append(action.RemoveLabelIds, "INBOX")
+	}
+
+	if f.Read {
+		action.RemoveLabelIds = append(action.RemoveLabelIds, "UNREAD")
+	}
+
+	if f.Delete {
+		action.AddLabelIds = append(action.AddLabelIds, "TRASH")
+	}
+
 	filters := []gmail.Filter{
 		{
-			Action:   &gmail.FilterAction{},
-			Criteria: &gmail.FilterCriteria{},
+			Action: &action,
+			Criteria: &gmail.FilterCriteria{
+				Query: f.Query,
+			},
 		},
 	}
 	return filters, nil
 }
 
-func (f filter) addFilter() error {
+func (f filter) addFilter(labels *labelMap) error {
 	// Convert the filter into a gmail filter.
-	filters, err := f.toGmailFilters()
+	filters, err := f.toGmailFilters(labels)
 	if err != nil {
 		return err
 	}
 
 	// Add the filters.
 	for _, filter := range filters {
-		if _, err := api.Users.Settings.Filters.Create(gmailUser).Do(gmailUser, &filter); err != nil {
+		if _, err := api.Users.Settings.Filters.Create(gmailUser, &filter).Do(); err != nil {
 			return fmt.Errorf("creating filter failed: %v", err)
 		}
 	}

@@ -25,26 +25,26 @@ func getLabelMap() (labelMap, error) {
 	return labels, nil
 }
 
-func (m *labelMap) createLabelIfDoesNotExist(name string) error {
+func (m *labelMap) createLabelIfDoesNotExist(name string) (string, error) {
 	// De reference the pointer so we can index.
 	labels := *m
 
 	// Try to find the label.
-	_, ok := labels[strings.ToLower(name)]
+	id, ok := labels[strings.ToLower(name)]
 	if ok {
 		// We found the label.
-		return nil
+		return id, nil
 	}
 
 	// Create the label if it does not exist.
 	label, err := api.Users.Labels.Create(gmailUser, &gmail.Label{Name: name}).Do()
 	if err != nil {
-		return fmt.Errorf("creating label %s failed: %v", name, err)
+		return "", fmt.Errorf("creating label %s failed: %v", name, err)
 	}
 	logrus.Infof("Created label: %s", name)
 
 	// Update our label map.
 	labels[strings.ToLower(name)] = label.Id
 	m = &labels
-	return nil
+	return label.Id, nil
 }

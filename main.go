@@ -127,7 +127,7 @@ func main() {
 
 		// Convert our filters into gmail filters and add them.
 		for _, f := range filters {
-			if err := f.addFilter(); err != nil {
+			if err := f.addFilter(&labels); err != nil {
 				return err
 			}
 		}
