@@ -10,7 +10,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/BurntSushi/toml"
 	"github.com/genuinetools/pkg/cli"
 	"github.com/jessfraz/gmailfilterb0t/version"
 	"github.com/sirupsen/logrus"
@@ -134,20 +133,6 @@ func main() {
 	p.Run()
 }
 
-func decodeFile(file string) ([]filter, error) {
-	b, err := ioutil.ReadFile(file)
-	if err != nil {
-		return nil, fmt.Errorf("reading filter file %s failed: %v", file, err)
-	}
-
-	var ff filterfile
-	if _, err := toml.Decode(string(b), &ff); err != nil {
-		return nil, fmt.Errorf("decoding toml failed: %v", err)
-	}
-
-	return ff.Filters, nil
-}
-
 func getExistingFilters() error {
 	// Get current filters for the user.
 	l, err := api.Users.Settings.Filters.List(gmailUser).Do()
@@ -162,19 +147,4 @@ func getExistingFilters() error {
 	}
 
 	return nil
-}
-
-func getLabelMap() (map[string]string, error) {
-	// Get the labels for the user and map its name to its ID.
-	l, err := api.Users.Labels.List(gmailUser).Do()
-	if err != nil {
-		return nil, fmt.Errorf("listing labels failed: %v", err)
-	}
-
-	labels := map[string]string{}
-	for _, label := range l.Labels {
-		labels[label.Name] = label.Id
-	}
-
-	return labels, nil
 }

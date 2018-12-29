@@ -6,3 +6,35 @@ read = true
 [[filter]]
 query = "from:notifications@github.com LGTM"
 label = "github/LGTM"
+
+[[filter]]
+query = """
+(-to:team_mention@noreply.github.com \
+ (from:(notifications@github.com) AND (@jfrazelle OR @jessfraz OR to:mention@noreply.github.com OR to:author@noreply.github.com OR to:assign@noreply.github.com)))
+"""
+label = "participating/github"
+
+[[filter]]
+query = """
+to:team_mention@noreply.github.com \
+-to:mention@noreply.github.com \
+-to:author@noreply.github.com \
+-to:assign@noreply.github.com
+"""
+archive = true
+read = true
+
+[[filter]]
+query = "(from:me AND to:reply@reply.github.com)"
+label = "participating/github"
+
+[[filter]]
+query = "(from:notifications@github.com)"
+label = "github"
+
+[[filter]]
+queryOr = [
+	"to:acm@jessfraz.com",
+	"to:ACM-W-PUBLIC@listserv.acm.org"
+]
+label = "Tech Things/ACM"
