@@ -9,7 +9,6 @@ import (
 	"os"
 	"os/signal"
 	"os/user"
-	"path/filepath"
 	"syscall"
 
 	"github.com/genuinetools/pkg/cli"
@@ -19,23 +18,19 @@ import (
 	"google.golang.org/api/gmail/v1"
 )
 
-var (
-	gmailKeyfile string
-	credsDir     string
+const (
+	tokenFile = "/tmp/token.json"
+)
 
-	gmailClient *gmail.Service
+var (
+	credsFile string
+
+	api *gmail.Service
 
 	debug bool
 )
 
 func main() {
-	// Get home directory.
-	home, err := getHome()
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	credsDir = filepath.Join(home, ".gmailfilterb0t")
-
 	// Create a new cli program.
 	p := cli.NewProgram()
 	p.Name = "gmailfilterb0t"
@@ -49,7 +44,8 @@ func main() {
 	p.FlagSet.BoolVar(&debug, "d", false, "enable debug logging")
 	p.FlagSet.BoolVar(&debug, "debug", false, "enable debug logging")
 
-	p.FlagSet.StringVar(&gmailKeyfile, "gmail-keyfile", filepath.Join(credsDir, "gmail.json"), "Path to Gmail keyfile")
+	p.FlagSet.StringVar(&credsFile, "creds-file", os.Getenv("GMAIL_CREDENTIAL_FILE"), "Gmail credential file (or env var GMAIL_CREDENTIAL_FILE)")
+	p.FlagSet.StringVar(&credsFile, "f", os.Getenv("GMAIL_CREDENTIAL_FILE"), "Gmail credential file (or env var GMAIL_CREDENTIAL_FILE)")
 
 	// Set the before function.
 	p.Before = func(ctx context.Context) error {
@@ -58,20 +54,39 @@ func main() {
 			logrus.SetLevel(logrus.DebugLevel)
 		}
 
-		// Create the Google calendar API client.
-		gmailData, err := ioutil.ReadFile(gmailKeyfile)
-		if err != nil {
-			return fmt.Errorf("reading file %s failed: %v", gmailKeyfile, err)
-		}
-		gmailTokenSource, err := google.JWTConfigFromJSON(gmailData, gmail.GmailSettingsBasicScope)
-		if err != nil {
-			return fmt.Errorf("creating gmail token source from file %s failed: %v", gmailKeyfile, err)
+		if len(credsFile) < 1 {
+			return errors.New("Gmail credential file cannot be empty")
 		}
 
-		// Create the Gmail client.
-		gmailClient, err = gmail.New(gmailTokenSource.Client(ctx))
+		// Make sure the file exists.
+		if _, err := os.Stat(credsFile); os.IsNotExist(err) {
+			return fmt.Errorf("Credential file %s does not exist", credsFile)
+		}
+
+		// Read the credentials file.
+		b, err := ioutil.ReadFile(credsFile)
 		if err != nil {
-			return fmt.Errorf("creating gmail client failed: %v", err)
+			logrus.Fatalf("reading client secret file %s failed: %v", credsFile, err)
+		}
+
+		// If modifying these scopes, delete your previously saved token.json.
+		config, err := google.ConfigFromJSON(b,
+			// Read, modify, and manage your settings.
+			gmail.GmailSettingsBasicScope)
+		if err != nil {
+			logrus.Fatalf("parsing client secret file to config failed: %v", err)
+		}
+
+		// Get the client from the config.
+		client, err := getClient(ctx, config)
+		if err != nil {
+			logrus.Fatalf("creating client failed: %v", err)
+		}
+
+		// Create the service for the Gmail client.
+		api, err = gmail.New(client)
+		if err != nil {
+			logrus.Fatalf("creating Gmail client failed: %v", err)
 		}
 
 		return nil

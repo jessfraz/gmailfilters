@@ -14,8 +14,8 @@ golang.org/x/crypto/ssh/terminal
 golang.org/x/net/context/ctxhttp
 golang.org/x/net/context
 # golang.org/x/oauth2 v0.0.0-20181203162652-d668ce993890
-golang.org/x/oauth2/google
 golang.org/x/oauth2
+golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
 golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt

@@ -35,8 +35,8 @@ Usage: gmailfilterb0t <command>
 
 Flags:
 
-  -d, --debug      enable debug logging (default: false)
-  --gmail-keyfile  Path to GMail keyfile (default: /home/jessie/.gmailfilterb0t/gmail.json)
+  -d, --debug       enable debug logging (default: false)
+  -f, --creds-file  Gmail credential file (or env var GMAIL_CREDENTIAL_FILE) (default: <none>)
 
 Commands:
 
