@@ -72,6 +72,8 @@ func main() {
 
 		// If modifying these scopes, delete your previously saved token.json.
 		config, err := google.ConfigFromJSON(b,
+			// Manage labels.
+			gmail.GmailLabelsScope,
 			// Read, modify, and manage your settings.
 			gmail.GmailSettingsBasicScope)
 		if err != nil {
@@ -109,6 +111,12 @@ func main() {
 			}
 		}()
 
+		labels, err := getLabelMap()
+		if err != nil {
+			return err
+		}
+		fmt.Printf("labels: %#v\n\n", labels)
+
 		filters, err := decodeFile(args[0])
 		if err != nil {
 			return err
@@ -126,7 +134,7 @@ func main() {
 	p.Run()
 }
 
-func decodeFile(file string) ([]Filter, error) {
+func decodeFile(file string) ([]filter, error) {
 	b, err := ioutil.ReadFile(file)
 	if err != nil {
 		return nil, fmt.Errorf("reading filter file %s failed: %v", file, err)
@@ -154,4 +162,19 @@ func getExistingFilters() error {
 	}
 
 	return nil
+}
+
+func getLabelMap() (map[string]string, error) {
+	// Get the labels for the user and map its name to its ID.
+	l, err := api.Users.Labels.List(gmailUser).Do()
+	if err != nil {
+		return nil, fmt.Errorf("listing labels failed: %v", err)
+	}
+
+	labels := map[string]string{}
+	for _, label := range l.Labels {
+		labels[label.Name] = label.Id
+	}
+
+	return labels, nil
 }
