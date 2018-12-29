@@ -1,0 +1,8 @@
+[[filter]]
+query = "to:your_activity@noreply.github.com"
+archive = true
+read = true
+
+[[filter]]
+query = "from:notifications@github.com LGTM"
+label = "github/LGTM"

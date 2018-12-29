@@ -2,6 +2,7 @@ module github.com/jessfraz/gmailfilterb0t
 
 require (
 	cloud.google.com/go v0.34.0 // indirect
+	github.com/BurntSushi/toml v0.3.1
 	github.com/genuinetools/pkg v0.0.0-20181022210355-2fcf164d37cb
 	github.com/sirupsen/logrus v1.2.0
 	golang.org/x/net v0.0.0-20181220203305-927f97764cc3 // indirect

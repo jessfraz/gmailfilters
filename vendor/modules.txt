@@ -1,5 +1,7 @@
 # cloud.google.com/go v0.34.0
 cloud.google.com/go/compute/metadata
+# github.com/BurntSushi/toml v0.3.1
+github.com/BurntSushi/toml
 # github.com/genuinetools/pkg v0.0.0-20181022210355-2fcf164d37cb
 github.com/genuinetools/pkg/cli
 # github.com/golang/protobuf v1.2.0
