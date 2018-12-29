@@ -6,6 +6,11 @@
 
 A tool to sync Gmail filters from a config file to your account.
 
+> **NOTE:** This makes it so the single configuration file is the only way to
+   add filters to your account, meaning if you add a filter via the UI and do not
+   also add it in your config file, the next time you run this tool on your
+   outdated config, the filter you added _only_ in the UI will be deleted.
+
 * [Installation](README.md#installation)
    * [Binaries](README.md#binaries)
    * [Via Go](README.md#via-go)
