@@ -18,39 +18,39 @@ jobs:
       deploy:
         provider: releases
         file:
-          - cross/gmailfilterb0t-darwin-amd64
-          - cross/gmailfilterb0t-darwin-amd64.md5
-          - cross/gmailfilterb0t-darwin-amd64.sha256
-          - cross/gmailfilterb0t-darwin-386
-          - cross/gmailfilterb0t-darwin-386.md5
-          - cross/gmailfilterb0t-darwin-386.sha256
-          - cross/gmailfilterb0t-freebsd-amd64
-          - cross/gmailfilterb0t-freebsd-amd64.md5
-          - cross/gmailfilterb0t-freebsd-amd64.sha256
-          - cross/gmailfilterb0t-freebsd-386
-          - cross/gmailfilterb0t-freebsd-386.md5
-          - cross/gmailfilterb0t-freebsd-386.sha256
-          - cross/gmailfilterb0t-linux-arm
-          - cross/gmailfilterb0t-linux-arm.md5
-          - cross/gmailfilterb0t-linux-arm.sha256
-          - cross/gmailfilterb0t-linux-arm64
-          - cross/gmailfilterb0t-linux-arm64.md5
-          - cross/gmailfilterb0t-linux-arm64.sha256
-          - cross/gmailfilterb0t-linux-amd64
-          - cross/gmailfilterb0t-linux-amd64.md5
-          - cross/gmailfilterb0t-linux-amd64.sha256
-          - cross/gmailfilterb0t-linux-386
-          - cross/gmailfilterb0t-linux-386.md5
-          - cross/gmailfilterb0t-linux-386.sha256
-          - cross/gmailfilterb0t-solaris-amd64
-          - cross/gmailfilterb0t-solaris-amd64.md5
-          - cross/gmailfilterb0t-solaris-amd64.sha256
-          - cross/gmailfilterb0t-windows-amd64
-          - cross/gmailfilterb0t-windows-amd64.md5
-          - cross/gmailfilterb0t-windows-amd64.sha256
-          - cross/gmailfilterb0t-windows-386
-          - cross/gmailfilterb0t-windows-386.md5
-          - cross/gmailfilterb0t-windows-386.sha256
+          - cross/gmailfilters-darwin-amd64
+          - cross/gmailfilters-darwin-amd64.md5
+          - cross/gmailfilters-darwin-amd64.sha256
+          - cross/gmailfilters-darwin-386
+          - cross/gmailfilters-darwin-386.md5
+          - cross/gmailfilters-darwin-386.sha256
+          - cross/gmailfilters-freebsd-amd64
+          - cross/gmailfilters-freebsd-amd64.md5
+          - cross/gmailfilters-freebsd-amd64.sha256
+          - cross/gmailfilters-freebsd-386
+          - cross/gmailfilters-freebsd-386.md5
+          - cross/gmailfilters-freebsd-386.sha256
+          - cross/gmailfilters-linux-arm
+          - cross/gmailfilters-linux-arm.md5
+          - cross/gmailfilters-linux-arm.sha256
+          - cross/gmailfilters-linux-arm64
+          - cross/gmailfilters-linux-arm64.md5
+          - cross/gmailfilters-linux-arm64.sha256
+          - cross/gmailfilters-linux-amd64
+          - cross/gmailfilters-linux-amd64.md5
+          - cross/gmailfilters-linux-amd64.sha256
+          - cross/gmailfilters-linux-386
+          - cross/gmailfilters-linux-386.md5
+          - cross/gmailfilters-linux-386.sha256
+          - cross/gmailfilters-solaris-amd64
+          - cross/gmailfilters-solaris-amd64.md5
+          - cross/gmailfilters-solaris-amd64.sha256
+          - cross/gmailfilters-windows-amd64
+          - cross/gmailfilters-windows-amd64.md5
+          - cross/gmailfilters-windows-amd64.sha256
+          - cross/gmailfilters-windows-386
+          - cross/gmailfilters-windows-386.md5
+          - cross/gmailfilters-windows-386.sha256
         skip_cleanup: true
         on:
           tags: true

@@ -1,5 +1,5 @@
 # Setup name variables for the package/tool
-NAME := gmailfilterb0t
+NAME := gmailfilters
 PKG := github.com/jessfraz/$(NAME)
 
 CGO_ENABLED := 0

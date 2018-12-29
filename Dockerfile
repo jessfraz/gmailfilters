@@ -8,7 +8,7 @@ RUN	apk add --no-cache \
 	bash \
 	ca-certificates
 
-COPY . /go/src/github.com/jessfraz/gmailfilterb0t
+COPY . /go/src/github.com/jessfraz/gmailfilters
 
 RUN set -x \
 	&& apk add --no-cache --virtual .build-deps \
@@ -17,17 +17,17 @@ RUN set -x \
 		libc-dev \
 		libgcc \
 		make \
-	&& cd /go/src/github.com/jessfraz/gmailfilterb0t \
+	&& cd /go/src/github.com/jessfraz/gmailfilters \
 	&& make static \
-	&& mv gmailfilterb0t /usr/bin/gmailfilterb0t \
+	&& mv gmailfilters /usr/bin/gmailfilters \
 	&& apk del .build-deps \
 	&& rm -rf /go \
 	&& echo "Build complete."
 
 FROM alpine:latest
 
-COPY --from=builder /usr/bin/gmailfilterb0t /usr/bin/gmailfilterb0t
+COPY --from=builder /usr/bin/gmailfilters /usr/bin/gmailfilters
 COPY --from=builder /etc/ssl/certs/ /etc/ssl/certs
 
-ENTRYPOINT [ "gmailfilterb0t" ]
+ENTRYPOINT [ "gmailfilters" ]
 CMD [ "--help" ]

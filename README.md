@@ -1,8 +1,8 @@
-# gmailfilterb0t
+# gmailfilters
 
-[![Travis CI](https://img.shields.io/travis/jessfraz/gmailfilterb0t.svg?style=for-the-badge)](https://travis-ci.org/jessfraz/gmailfilterb0t)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/jessfraz/gmailfilterb0t)
-[![Github All Releases](https://img.shields.io/github/downloads/jessfraz/gmailfilterb0t/total.svg?style=for-the-badge)](https://github.com/jessfraz/gmailfilterb0t/releases)
+[![Travis CI](https://img.shields.io/travis/jessfraz/gmailfilters.svg?style=for-the-badge)](https://travis-ci.org/jessfraz/gmailfilters)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/jessfraz/gmailfilters)
+[![Github All Releases](https://img.shields.io/github/downloads/jessfraz/gmailfilters/total.svg?style=for-the-badge)](https://github.com/jessfraz/gmailfilters/releases)
 
 A tool to sync Gmail filters from a config file to your account.
 
@@ -17,21 +17,21 @@ A tool to sync Gmail filters from a config file to your account.
 
 #### Binaries
 
-For installation instructions from binaries please visit the [Releases Page](https://github.com/jessfraz/gmailfilterb0t/releases).
+For installation instructions from binaries please visit the [Releases Page](https://github.com/jessfraz/gmailfilters/releases).
 
 #### Via Go
 
 ```console
-$ go get github.com/jessfraz/gmailfilterb0t
+$ go get github.com/jessfraz/gmailfilters
 ```
 
 ## Usage
 
 ```console
-$ gmailfilterb0t -h
-gmailfilterb0t -  A tool to sync Gmail filters from a config file to your account.
+$ gmailfilters -h
+gmailfilters -  A tool to sync Gmail filters from a config file to your account.
 
-Usage: gmailfilterb0t <command>
+Usage: gmailfilters <command>
 
 Flags:
 

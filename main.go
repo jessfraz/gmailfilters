@@ -11,7 +11,7 @@ import (
 	"syscall"
 
 	"github.com/genuinetools/pkg/cli"
-	"github.com/jessfraz/gmailfilterb0t/version"
+	"github.com/jessfraz/gmailfilters/version"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/gmail/v1"
@@ -33,14 +33,14 @@ var (
 func main() {
 	// Create a new cli program.
 	p := cli.NewProgram()
-	p.Name = "gmailfilterb0t"
+	p.Name = "gmailfilters"
 	p.Description = "A tool to sync Gmail filters from a config file to your account"
 	// Set the GitCommit and Version.
 	p.GitCommit = version.GITCOMMIT
 	p.Version = version.VERSION
 
 	// Setup the global flags.
-	p.FlagSet = flag.NewFlagSet("gmailfilterb0t", flag.ExitOnError)
+	p.FlagSet = flag.NewFlagSet("gmailfilters", flag.ExitOnError)
 	p.FlagSet.BoolVar(&debug, "d", false, "enable debug logging")
 	p.FlagSet.BoolVar(&debug, "debug", false, "enable debug logging")
 
