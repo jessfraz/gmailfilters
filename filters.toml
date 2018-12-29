@@ -177,4 +177,5 @@ queryOr = [
 label = "Mailing Lists/kubernetes-security"
 
 [[filter]]
-query =
+query = "list:cncf-toc@lists.cncf.io"
+label = "Mailing Lists/cncf-toc"
