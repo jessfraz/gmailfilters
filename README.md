@@ -11,13 +11,11 @@ A tool to sync Gmail filters from a config file to your account.
    also add it in your config file, the next time you run this tool on your
    outdated config, the filter you added _only_ in the UI will be deleted.
 
-* [Installation](README.md#installation)
-   * [Binaries](README.md#binaries)
-   * [Via Go](README.md#via-go)
-* [Usage](README.md#usage)
-* [Example Filter File](README.md#example-filter-file)
-* [Setup](README.md#setup)
-   * [Gmail](README.md#gmail)
+**Table of Contents**
+
+<!-- toc -->
+
+<!-- tocstop -->
 
 ## Installation
 
