@@ -44,7 +44,7 @@ Commands:
   version  Show the version information.
 ```
 
-## Example File
+## Example Filter File
 
 ```toml
 [[filter]]
