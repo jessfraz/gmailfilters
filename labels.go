@@ -25,7 +25,7 @@ func getLabelMap() (labelMap, error) {
 	return labels, nil
 }
 
-func getLabelMapOnId() (labelMap, error) {
+func getLabelMapOnID() (labelMap, error) {
 	// Get the labels for the user and map its name to its ID.
 	l, err := api.Users.Labels.List(gmailUser).Do()
 	if err != nil {

@@ -198,14 +198,14 @@ func getExistingFilters() ([]filter, error) {
 		return nil, err
 	}
 
-	labels, err := getLabelMapOnId()
+	labels, err := getLabelMapOnID()
 	if err != nil {
 		return nil, err
 	}
 
 	var filters []filter
 
-	for _, gmailFilter:= range gmailFilters.Filter {
+	for _, gmailFilter := range gmailFilters.Filter {
 		var f filter
 
 		if gmailFilter.Criteria.Query > "" {
@@ -216,11 +216,11 @@ func getExistingFilters() ([]filter, error) {
 			}
 
 			if len(gmailFilter.Action.AddLabelIds) > 0 {
-				labelId := gmailFilter.Action.AddLabelIds[0]
-				if labelId == "TRASH" {
+				labelID := gmailFilter.Action.AddLabelIds[0]
+				if labelID == "TRASH" {
 					f.Delete = true
 				} else {
-					labelName, ok := labels[labelId]
+					labelName, ok := labels[labelID]
 					if ok {
 						f.Label = labelName
 					}
@@ -228,10 +228,10 @@ func getExistingFilters() ([]filter, error) {
 			}
 
 			if len(gmailFilter.Action.RemoveLabelIds) > 0 {
-				for _, labelId := range gmailFilter.Action.RemoveLabelIds {
-					if labelId == "UNREAD" {
+				for _, labelID := range gmailFilter.Action.RemoveLabelIds {
+					if labelID == "UNREAD" {
 						f.Read = true
-					} else if labelId == "INBOX" {
+					} else if labelID == "INBOX" {
 						if gmailFilter.Criteria.NegatedQuery == "to:me" {
 							f.ArchiveUnlessToMe = true
 						} else {
