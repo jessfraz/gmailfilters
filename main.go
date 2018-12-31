@@ -28,6 +28,8 @@ var (
 	api *gmail.Service
 
 	debug bool
+
+	export bool
 )
 
 func main() {
@@ -43,6 +45,9 @@ func main() {
 	p.FlagSet = flag.NewFlagSet("gmailfilters", flag.ExitOnError)
 	p.FlagSet.BoolVar(&debug, "d", false, "enable debug logging")
 	p.FlagSet.BoolVar(&debug, "debug", false, "enable debug logging")
+
+	p.FlagSet.BoolVar(&export, "e", false, "export existing filters")
+	p.FlagSet.BoolVar(&export, "export", false, "export existing filters")
 
 	p.FlagSet.StringVar(&credsFile, "creds-file", os.Getenv("GMAIL_CREDENTIAL_FILE"), "Gmail credential file (or env var GMAIL_CREDENTIAL_FILE)")
 	p.FlagSet.StringVar(&credsFile, "f", os.Getenv("GMAIL_CREDENTIAL_FILE"), "Gmail credential file (or env var GMAIL_CREDENTIAL_FILE)")
@@ -109,6 +114,10 @@ func main() {
 				os.Exit(0)
 			}
 		}()
+
+		if export {
+			return exportExistingFilters(args[0])
+		}
 
 		labels, err := getLabelMap()
 		if err != nil {
