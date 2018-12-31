@@ -205,7 +205,7 @@ func getExistingFilters() ([]filter, error) {
 
 	var filters []filter
 
-	for _, gmailFilter:= range gmailFilters.Filter {
+	for _, gmailFilter := range gmailFilters.Filter {
 		var f filter
 
 		if gmailFilter.Criteria.Query > "" {
