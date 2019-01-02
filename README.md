@@ -15,13 +15,14 @@ A tool to sync Gmail filters from a config file to your account.
 
 <!-- toc -->
 
-- [Installation](#installation)
-    + [Binaries](#binaries)
-    + [Via Go](#via-go)
-- [Usage](#usage)
-- [Example Filter File](#example-filter-file)
-- [Setup](#setup)
-  * [Gmail](#gmail)
+- [gmailfilters](#gmailfilters)
+  - [Installation](#installation)
+      - [Binaries](#binaries)
+      - [Via Go](#via-go)
+  - [Usage](#usage)
+  - [Example Filter File](#example-filter-file)
+  - [Setup](#setup)
+    - [Gmail](#gmail)
 
 <!-- tocstop -->
 
@@ -47,8 +48,10 @@ Usage: gmailfilters <command>
 
 Flags:
 
-  -d, --debug       enable debug logging (default: false)
-  -f, --creds-file  Gmail credential file (or env var GMAIL_CREDENTIAL_FILE) (default: <none>)
+  -v, --debug       enable debug logging (default: false)
+  -c, --creds-file  Gmail credential file (or env var GMAIL_CREDENTIAL_FILE) (default: <none>)
+  -d, --download    downlaod existing fitlers to 
+  -f --filter-file
 
 Commands:
 

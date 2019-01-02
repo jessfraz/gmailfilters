@@ -23,11 +23,14 @@ const (
 )
 
 var (
-	credsFile string
+	credsFile  string
+	jsonFile   string
+	filterFile string
 
 	api *gmail.Service
 
-	debug bool
+	debug           bool
+	downloadFilters bool
 )
 
 func main() {
@@ -41,11 +44,14 @@ func main() {
 
 	// Setup the global flags.
 	p.FlagSet = flag.NewFlagSet("gmailfilters", flag.ExitOnError)
-	p.FlagSet.BoolVar(&debug, "d", false, "enable debug logging")
+	p.FlagSet.BoolVar(&debug, "v", false, "enable debug logging")
 	p.FlagSet.BoolVar(&debug, "debug", false, "enable debug logging")
+	p.FlagSet.BoolVar(&downloadFilters, "d", false, "download existing filters to toml and json. (Best effort conversion)")
+	p.FlagSet.BoolVar(&downloadFilters, "download", false, "download existing filters to toml")
 
 	p.FlagSet.StringVar(&credsFile, "creds-file", os.Getenv("GMAIL_CREDENTIAL_FILE"), "Gmail credential file (or env var GMAIL_CREDENTIAL_FILE)")
-	p.FlagSet.StringVar(&credsFile, "f", os.Getenv("GMAIL_CREDENTIAL_FILE"), "Gmail credential file (or env var GMAIL_CREDENTIAL_FILE)")
+	p.FlagSet.StringVar(&credsFile, "c", os.Getenv("GMAIL_CREDENTIAL_FILE"), "Gmail credential file (or env var GMAIL_CREDENTIAL_FILE)")
+	p.FlagSet.StringVar(&filterFile, "f", os.Getenv("FILTER_FILE"), "Filter toml file (or env var FILTER_FILE)")
 
 	// Set the before function.
 	p.Before = func(ctx context.Context) error {
@@ -95,10 +101,6 @@ func main() {
 	}
 
 	p.Action = func(ctx context.Context, args []string) error {
-		if len(args) < 1 {
-			return errors.New("must pass a path to a gmail filter configuration file")
-		}
-
 		// On ^C, or SIGTERM handle exit.
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, os.Interrupt)
@@ -115,27 +117,38 @@ func main() {
 			return err
 		}
 
-		fmt.Printf("Decoding filters from file %s\n", args[0])
-		filters, err := decodeFile(args[0])
-		if err != nil {
-			return err
-		}
-
-		// Delete our existing filters.
-		if err := deleteExistingFilters(); err != nil {
-			return err
-		}
-
-		// Convert our filters into gmail filters and add them.
-		fmt.Printf("Updating %d filters, this might take a bit...\n", len(filters))
-		for _, f := range filters {
-			if err := f.addFilter(&labels); err != nil {
+		if downloadFilters != false {
+			fmt.Println("Downloading existing filters.")
+			err := downloadExistingFilters(&labels)
+			if err != nil {
 				return err
 			}
 		}
 
-		fmt.Printf("Successfully updated %d filters\n", len(filters))
+		if len(filterFile) >= 1 {
+			fmt.Printf("Decoding filters from file %s\n", filterFile)
+			filters, err := decodeFile(filterFile)
+			if err != nil {
+				return err
+			}
 
+			// Delete our existing filters.
+			fmt.Println("Deleting existing filters")
+			if err := deleteExistingFilters(); err != nil {
+				return err
+			}
+
+			// Convert our filters into gmail filters and add them.
+			fmt.Printf("Updating %d filters, this might take a bit...\n", len(filters))
+			for _, f := range filters {
+				if err := f.addFilter(&labels); err != nil {
+					return err
+				}
+			}
+			fmt.Printf("Successfully updated %d filters\n", len(filters))
+		} else {
+			fmt.Printf("No filter file specified. Will not updating or deleting filters.")
+		}
 		return nil
 	}
 

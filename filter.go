@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"strconv"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -26,6 +28,7 @@ type filter struct {
 	ToMe              bool
 	ArchiveUnlessToMe bool
 	Label             string
+	ForwardTo         string
 }
 
 func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
@@ -67,6 +70,10 @@ func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
 
 	if f.Delete {
 		action.AddLabelIds = append(action.AddLabelIds, "TRASH")
+	}
+
+	if len(f.ForwardTo) > 0 {
+		action.Forward = f.ForwardTo
 	}
 
 	criteria := gmail.FilterCriteria{
@@ -140,6 +147,110 @@ func decodeFile(file string) ([]filter, error) {
 	}
 
 	return ff.Filter, nil
+}
+
+func downloadExistingFilters(l *labelMap) error {
+	labels := *l
+	filterList, err := api.Users.Settings.Filters.List(gmailUser).Do()
+	if err != nil {
+		return fmt.Errorf("listing filters failed: %v", err)
+	}
+
+	backupFilterJsonFile, err := ioutil.TempFile("./", "backupFilterJson")
+	if err != nil {
+		return fmt.Errorf("failed to create backup filter json file: %v", err)
+	}
+	defer backupFilterJsonFile.Close()
+
+	backupFilterTomlFile, err := ioutil.TempFile("./", "backupFilterToml")
+	if err != nil {
+		return fmt.Errorf("failed to create backup filter json file: %v", err)
+	}
+	defer backupFilterTomlFile.Close()
+
+	filterJson, err := json.Marshal(&filterList)
+	if err != nil {
+		return fmt.Errorf("Failed to marshal filterList")
+	}
+
+	if _, err := backupFilterJsonFile.Write(filterJson); err != nil {
+		return fmt.Errorf("failed to write filterList to backup filter file: %v", err)
+	}
+
+	for _, googleFilter := range filterList.Filter {
+		Label := ""
+		ForwardTo := ""
+		// queryOr := []string{}
+		Archive := false
+		Read := false
+		ToMe := false
+		Delete := false
+		ArchiveUnlessToMe := false
+		query := ""
+
+		// Start toml string
+		filterString := "[[filter]]" + "\n"
+		if len(googleFilter.Criteria.From) > 0 {
+			query += "from:(" + googleFilter.Criteria.From + ") "
+		}
+
+		if len(googleFilter.Criteria.Subject) > 0 {
+			query += "subject:(" + googleFilter.Criteria.Subject + ") "
+		}
+
+		if len(googleFilter.Criteria.To) > 0 {
+			query += "to:" + googleFilter.Criteria.To + " "
+		}
+		
+		query += googleFilter.Criteria.Query
+
+		filterString += "query = \"\"\" " + query + " \"\"\"" + "\n"
+
+		for _, label := range googleFilter.Action.RemoveLabelIds {
+			if label == "INBOX" {
+				Archive = true
+				filterString += "archive = " + strconv.FormatBool(Archive) + "\n"
+				if googleFilter.Criteria.NegatedQuery == "to:me" {
+					ArchiveUnlessToMe = true
+					filterString += "archiveUnlessToMe = " + strconv.FormatBool(ArchiveUnlessToMe) + "\n"
+				}
+			}
+			if label == "UNREAD" {
+				Read = true
+				filterString += "read = " + strconv.FormatBool(Read) + "\n"
+			}
+		}
+
+		for _, label := range googleFilter.Action.AddLabelIds {
+			if label == "TRASH" {
+				Delete = true
+				filterString += "delete = " + strconv.FormatBool(Delete) + "\n"
+			}
+			for labelName, labelId := range labels {
+				if label == labelId {
+					Label = labelName
+					filterString += "label = \"" + Label + "\"\n"
+				}
+			}
+		}
+
+		if googleFilter.Criteria.To == "me" {
+			ToMe = true
+			filterString += "ToMe = " + strconv.FormatBool(ToMe) + "\n"
+		}
+
+		if len(googleFilter.Action.Forward) > 0 {
+			ForwardTo = "\"" + googleFilter.Action.Forward + "\""
+			filterString += "ForwardTo = " + ForwardTo + "\n"
+		}
+
+		filterString += "\n"
+
+		if _, err := backupFilterTomlFile.WriteString(filterString); err != nil {
+			return fmt.Errorf("failed to write localFilter to backup toml file: %v", err)
+		}
+	}
+	return nil
 }
 
 func deleteExistingFilters() error {
