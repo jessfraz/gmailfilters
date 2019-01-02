@@ -201,7 +201,7 @@ func downloadExistingFilters(l *labelMap) error {
 		if len(googleFilter.Criteria.To) > 0 {
 			query += "to:" + googleFilter.Criteria.To + " "
 		}
-		
+
 		query += googleFilter.Criteria.Query
 
 		filterString += "query = \"\"\" " + query + " \"\"\"" + "\n"
