@@ -64,12 +64,12 @@ func main() {
 		}
 
 		if len(credsFile) < 1 {
-			return errors.New("Gmail credential file cannot be empty")
+			return errors.New("the Gmail credential file cannot be empty")
 		}
 
 		// Make sure the file exists.
 		if _, err := os.Stat(credsFile); os.IsNotExist(err) {
-			return fmt.Errorf("Credential file %s does not exist", credsFile)
+			return fmt.Errorf("credential file %s does not exist", credsFile)
 		}
 
 		// Read the credentials file.
