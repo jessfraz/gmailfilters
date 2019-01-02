@@ -12,7 +12,7 @@ import (
 )
 
 // getClient retrieves a token, saves the token, then returns the generated client.
-func getClient(ctx context.Context, config *oauth2.Config) (*http.Client, error) {
+func getClient(ctx context.Context, tokenFile string, config *oauth2.Config) (*http.Client, error) {
 	// Try reading the token from the file.
 	tok, err := tokenFromFile(tokenFile)
 	if err != nil {

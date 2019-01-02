@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 
 	"github.com/genuinetools/pkg/cli"
@@ -18,12 +19,13 @@ import (
 )
 
 const (
-	tokenFile = "/tmp/token.json"
 	gmailUser = "me"
 )
 
 var (
 	credsFile string
+
+	tokenFile string
 
 	api *gmail.Service
 
@@ -54,6 +56,8 @@ func main() {
 
 	// Set the before function.
 	p.Before = func(ctx context.Context) error {
+		tokenFile = path.Join(os.TempDir(), "token.json")
+
 		// Set the log level.
 		if debug {
 			logrus.SetLevel(logrus.DebugLevel)
@@ -85,7 +89,7 @@ func main() {
 		}
 
 		// Get the client from the config.
-		client, err := getClient(ctx, config)
+		client, err := getClient(ctx, tokenFile, config)
 		if err != nil {
 			return fmt.Errorf("creating client failed: %v", err)
 		}
