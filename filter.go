@@ -29,6 +29,7 @@ type filter struct {
 	ArchiveUnlessToMe bool
 	Label             string
 	ForwardTo         string
+	NegatedQuery      string
 }
 
 func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
@@ -91,14 +92,24 @@ func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
 		filter,
 	}
 
+	negatedQuery := ""
+	if len(f.NegatedQuery) > 0 {
+		negatedQuery = f.NegatedQuery
+		filter.Criteria.NegatedQuery = negatedQuery
+	}
+
 	// If we need to archive unless to them, then add the additional filter.
 	if f.ArchiveUnlessToMe {
+		// This might create a logic problem.
+		if !strings.Contains(negatedQuery, "to:me") {
+			negatedQuery += " to:me"
+		}
 		// Copy the filter.
 		archiveIfNotToMeFilter := filter
 		archiveIfNotToMeFilter.Criteria = &gmail.FilterCriteria{
 			Query:        f.Query,
 			To:           "",
-			NegatedQuery: "to:me",
+			NegatedQuery: negatedQuery,
 		}
 
 		// Copy the action.
@@ -202,7 +213,7 @@ func downloadExistingFilters(l *labelMap) error {
 		for _, label := range googleFilter.Action.RemoveLabelIds {
 			if label == "INBOX" {
 				localFilter.Archive = true
-				if googleFilter.Criteria.NegatedQuery == "to:me" {
+				if strings.Contains(googleFilter.Criteria.NegatedQuery, "to:me") {
 					localFilter.ArchiveUnlessToMe = true
 				}
 			}
@@ -227,6 +238,10 @@ func downloadExistingFilters(l *labelMap) error {
 
 		if len(googleFilter.Action.Forward) > 0 {
 			localFilter.ForwardTo = googleFilter.Action.Forward
+		}
+
+		if len(googleFilter.Criteria.NegatedQuery) > 0 {
+			localFilter.NegatedQuery = googleFilter.Criteria.NegatedQuery
 		}
 
 		filterCollection.Filter = append(filterCollection.Filter, localFilter)
