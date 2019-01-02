@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/signal"
-	"path"
+	"path/filepath"
 	"syscall"
 
 	"github.com/genuinetools/pkg/cli"
@@ -54,10 +54,11 @@ func main() {
 	p.FlagSet.StringVar(&credsFile, "creds-file", os.Getenv("GMAIL_CREDENTIAL_FILE"), "Gmail credential file (or env var GMAIL_CREDENTIAL_FILE)")
 	p.FlagSet.StringVar(&credsFile, "f", os.Getenv("GMAIL_CREDENTIAL_FILE"), "Gmail credential file (or env var GMAIL_CREDENTIAL_FILE)")
 
+	p.FlagSet.StringVar(&tokenFile, "token-file", filepath.Join(os.TempDir(), "token.json"), "Gmail oauth token file")
+	p.FlagSet.StringVar(&tokenFile, "t", filepath.Join(os.TempDir(), "token.json"), "Gmail oauth token file")
+
 	// Set the before function.
 	p.Before = func(ctx context.Context) error {
-		tokenFile = path.Join(os.TempDir(), "token.json")
-
 		// Set the log level.
 		if debug {
 			logrus.SetLevel(logrus.DebugLevel)
