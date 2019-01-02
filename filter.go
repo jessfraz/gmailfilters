@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -147,6 +149,36 @@ func decodeFile(file string) ([]filter, error) {
 	return ff.Filter, nil
 }
 
+func exportExistingFilters(file string) error {
+	fmt.Print("exporting existing filters...\n")
+
+	filters, err := getExistingFilters()
+	if err != nil {
+		return fmt.Errorf("error downloading existing filters: %v", err)
+	}
+
+	var ff filterfile
+	for _, f := range filters {
+		// We could get duplicate filters, so it's best to remove them.
+		existingFilter := findExistingFilter(ff.Filter, f.Query)
+
+		// Since we can't return nil on a struct or compary it to something empty,
+		// check if the query exists. If not then consider it not found.
+		if existingFilter.Query != "" {
+			// Duplicate filters can only exist if the ArchiveUnlessToMe is set.
+			// So we can simply reset everything and just set the ArchiveUnlessToMe flag to true.
+			existingFilter.Archive = false
+			existingFilter.Delete = false
+			existingFilter.ToMe = false
+			existingFilter.ArchiveUnlessToMe = true
+		} else {
+			ff.Filter = append(ff.Filter, f)
+		}
+	}
+
+	return writeFiltersToFile(ff, file)
+}
+
 func deleteExistingFilters() error {
 	// Get current filters for the user.
 	l, err := api.Users.Settings.Filters.List(gmailUser).Do()
@@ -163,4 +195,89 @@ func deleteExistingFilters() error {
 	}
 
 	return nil
+}
+
+func getExistingFilters() ([]filter, error) {
+	gmailFilters, err := api.Users.Settings.Filters.List(gmailUser).Do()
+	if err != nil {
+		return nil, err
+	}
+
+	labels, err := getLabelMapOnID()
+	if err != nil {
+		return nil, err
+	}
+
+	var filters []filter
+
+	for _, gmailFilter := range gmailFilters.Filter {
+		var f filter
+
+		if gmailFilter.Criteria.Query > "" {
+			f.Query = gmailFilter.Criteria.Query
+
+			if gmailFilter.Criteria.To == "me" {
+				f.ToMe = true
+			}
+
+			if len(gmailFilter.Action.AddLabelIds) > 0 {
+				labelID := gmailFilter.Action.AddLabelIds[0]
+				if labelID == "TRASH" {
+					f.Delete = true
+				} else {
+					labelName, ok := labels[labelID]
+					if ok {
+						f.Label = labelName
+					}
+				}
+			}
+
+			if len(gmailFilter.Action.RemoveLabelIds) > 0 {
+				for _, labelID := range gmailFilter.Action.RemoveLabelIds {
+					if labelID == "UNREAD" {
+						f.Read = true
+					} else if labelID == "INBOX" {
+						if gmailFilter.Criteria.NegatedQuery == "to:me" {
+							f.ArchiveUnlessToMe = true
+						} else {
+							f.Archive = true
+						}
+					}
+				}
+			}
+		}
+
+		filters = append(filters, f)
+	}
+
+	return filters, nil
+}
+
+func writeFiltersToFile(ff filterfile, file string) error {
+	exportFile, err := os.Create(file)
+	if err != nil {
+		return fmt.Errorf("error exporting filters: %v", err)
+	}
+
+	writer := bufio.NewWriter(exportFile)
+	encoder := toml.NewEncoder(writer)
+	encoder.Indent = ""
+
+	if err := encoder.Encode(ff); err != nil {
+		return fmt.Errorf("error writing file: %v", err)
+	}
+
+	fmt.Printf("Exported %d filters\n", len(ff.Filter))
+
+	return nil
+}
+
+func findExistingFilter(filters []filter, query string) filter {
+	for _, f := range filters {
+		if f.Query == query {
+			return f
+		}
+	}
+
+	return filter{}
 }

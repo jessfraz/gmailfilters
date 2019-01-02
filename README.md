@@ -48,6 +48,7 @@ Usage: gmailfilters <command>
 Flags:
 
   -d, --debug       enable debug logging (default: false)
+  -e, --export      export existing filters (default: false)
   -f, --creds-file  Gmail credential file (or env var GMAIL_CREDENTIAL_FILE) (default: <none>)
 
 Commands:

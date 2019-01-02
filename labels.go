@@ -25,6 +25,21 @@ func getLabelMap() (labelMap, error) {
 	return labels, nil
 }
 
+func getLabelMapOnID() (labelMap, error) {
+	// Get the labels for the user and map its name to its ID.
+	l, err := api.Users.Labels.List(gmailUser).Do()
+	if err != nil {
+		return nil, fmt.Errorf("listing labels failed: %v", err)
+	}
+
+	labels := labelMap{}
+	for _, label := range l.Labels {
+		labels[label.Id] = label.Name
+	}
+
+	return labels, nil
+}
+
 func (m *labelMap) createLabelIfDoesNotExist(name string) (string, error) {
 	// De reference the pointer so we can index.
 	labels := *m
