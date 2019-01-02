@@ -1,11 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"strconv"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -151,6 +151,8 @@ func decodeFile(file string) ([]filter, error) {
 
 func downloadExistingFilters(l *labelMap) error {
 	labels := *l
+	var filterCollection filterfile
+
 	filterList, err := api.Users.Settings.Filters.List(gmailUser).Do()
 	if err != nil {
 		return fmt.Errorf("listing filters failed: %v", err)
@@ -178,18 +180,9 @@ func downloadExistingFilters(l *labelMap) error {
 	}
 
 	for _, googleFilter := range filterList.Filter {
-		Label := ""
-		ForwardTo := ""
-		// queryOr := []string{}
-		Archive := false
-		Read := false
-		ToMe := false
-		Delete := false
-		ArchiveUnlessToMe := false
+		localFilter := filter{}
 		query := ""
 
-		// Start toml string
-		filterString := "[[filter]]" + "\n"
 		if len(googleFilter.Criteria.From) > 0 {
 			query += "from:(" + googleFilter.Criteria.From + ") "
 		}
@@ -204,51 +197,47 @@ func downloadExistingFilters(l *labelMap) error {
 
 		query += googleFilter.Criteria.Query
 
-		filterString += "query = \"\"\" " + query + " \"\"\"" + "\n"
+		localFilter.Query = query
 
 		for _, label := range googleFilter.Action.RemoveLabelIds {
 			if label == "INBOX" {
-				Archive = true
-				filterString += "archive = " + strconv.FormatBool(Archive) + "\n"
+				localFilter.Archive = true
 				if googleFilter.Criteria.NegatedQuery == "to:me" {
-					ArchiveUnlessToMe = true
-					filterString += "archiveUnlessToMe = " + strconv.FormatBool(ArchiveUnlessToMe) + "\n"
+					localFilter.ArchiveUnlessToMe = true
 				}
 			}
 			if label == "UNREAD" {
-				Read = true
-				filterString += "read = " + strconv.FormatBool(Read) + "\n"
+				localFilter.Read = true
 			}
 		}
 
 		for _, label := range googleFilter.Action.AddLabelIds {
-			if label == "TRASH" {
-				Delete = true
-				filterString += "delete = " + strconv.FormatBool(Delete) + "\n"
-			}
 			for labelName, labelId := range labels {
-				if label == labelId {
-					Label = labelName
-					filterString += "label = \"" + Label + "\"\n"
+				if labelId == "TRASH" {
+					localFilter.Delete = true
+				} else if label == labelId {
+					localFilter.Label = labelName
 				}
 			}
 		}
 
 		if googleFilter.Criteria.To == "me" {
-			ToMe = true
-			filterString += "ToMe = " + strconv.FormatBool(ToMe) + "\n"
+			localFilter.ToMe = true
 		}
 
 		if len(googleFilter.Action.Forward) > 0 {
-			ForwardTo = "\"" + googleFilter.Action.Forward + "\""
-			filterString += "ForwardTo = " + ForwardTo + "\n"
+			localFilter.ForwardTo = googleFilter.Action.Forward
 		}
 
-		filterString += "\n"
+		filterCollection.Filter = append(filterCollection.Filter, localFilter)
+	}
 
-		if _, err := backupFilterTomlFile.WriteString(filterString); err != nil {
-			return fmt.Errorf("failed to write localFilter to backup toml file: %v", err)
-		}
+	writer := bufio.NewWriter(backupFilterTomlFile)
+	encoder := toml.NewEncoder(writer)
+	encoder.Indent = ""
+
+	if err := encoder.Encode(filterCollection); err != nil {
+		return fmt.Errorf("error writing file: %v", err)
 	}
 	return nil
 }
