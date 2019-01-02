@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 
 	"github.com/genuinetools/pkg/cli"
@@ -18,12 +19,13 @@ import (
 )
 
 const (
-	tokenFile = "/tmp/token.json"
 	gmailUser = "me"
 )
 
 var (
 	credsFile string
+
+	tokenFile string
 
 	api *gmail.Service
 
@@ -52,6 +54,9 @@ func main() {
 	p.FlagSet.StringVar(&credsFile, "creds-file", os.Getenv("GMAIL_CREDENTIAL_FILE"), "Gmail credential file (or env var GMAIL_CREDENTIAL_FILE)")
 	p.FlagSet.StringVar(&credsFile, "f", os.Getenv("GMAIL_CREDENTIAL_FILE"), "Gmail credential file (or env var GMAIL_CREDENTIAL_FILE)")
 
+	p.FlagSet.StringVar(&tokenFile, "token-file", filepath.Join(os.TempDir(), "token.json"), "Gmail oauth token file")
+	p.FlagSet.StringVar(&tokenFile, "t", filepath.Join(os.TempDir(), "token.json"), "Gmail oauth token file")
+
 	// Set the before function.
 	p.Before = func(ctx context.Context) error {
 		// Set the log level.
@@ -60,12 +65,12 @@ func main() {
 		}
 
 		if len(credsFile) < 1 {
-			return errors.New("Gmail credential file cannot be empty")
+			return errors.New("the Gmail credential file cannot be empty")
 		}
 
 		// Make sure the file exists.
 		if _, err := os.Stat(credsFile); os.IsNotExist(err) {
-			return fmt.Errorf("Credential file %s does not exist", credsFile)
+			return fmt.Errorf("credential file %s does not exist", credsFile)
 		}
 
 		// Read the credentials file.
@@ -85,7 +90,7 @@ func main() {
 		}
 
 		// Get the client from the config.
-		client, err := getClient(ctx, config)
+		client, err := getClient(ctx, tokenFile, config)
 		if err != nil {
 			return fmt.Errorf("creating client failed: %v", err)
 		}
