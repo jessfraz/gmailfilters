@@ -222,7 +222,7 @@ func getExistingFilters() ([]filter, error) {
 			}
 			isFilterValid = true
 		} else if gmailFilter.Criteria.From > "" {
-			f.Query = "from: " + gmailFilter.Criteria.From
+			f.Query = "from:(" + gmailFilter.Criteria.From + ")"
 			isFilterValid = true
 		}
 		if isFilterValid && gmailFilter.Action != nil {
