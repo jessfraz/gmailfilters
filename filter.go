@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -201,6 +202,10 @@ func exportExistingFilterHits(file string) error {
 			ff.Filter = append(ff.Filter, f)
 		}
 	}
+
+	sort.Slice(ff.Filter[:], func(i, j int) bool {
+		return ff.Filter[i].Hits > ff.Filter[j].Hits
+	})
 	return writeFiltersToFile(ff, file)
 }
 
@@ -224,7 +229,7 @@ func deleteExistingFilters() error {
 
 func (f *filter) getFilterHits() error {
 
-	messages, err := api.Users.Messages.List(gmailUser).Q(f.Query).Do()
+	messages, err := api.Users.Messages.List(gmailUser).Q(f.Query).MaxResults(100000).Do()
 	if err != nil {
 		return err
 	}
