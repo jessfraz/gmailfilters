@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -29,6 +30,7 @@ type filter struct {
 	ArchiveUnlessToMe bool
 	Label             string
 	ForwardTo         string
+	Hits              int
 }
 
 func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
@@ -179,6 +181,29 @@ func exportExistingFilters(file string) error {
 	return writeFiltersToFile(ff, file)
 }
 
+func exportExistingFilterHits(file string) error {
+	fmt.Print("getting existing filters...\n")
+
+	filters, err := getExistingFilters()
+	if err != nil {
+		return fmt.Errorf("error downloading existing filters: %v", err)
+	}
+
+	var ff filterfile
+	for _, f := range filters {
+		existingFilter := findExistingFilter(ff.Filter, f.Query)
+		if existingFilter.Query == "" {
+			err := f.getFilterHits()
+			if err != nil {
+				return fmt.Errorf("error calculating hits on filter: " + f.Query + ".  Error: " + err.Error())
+			}
+			println("Found " + strconv.Itoa(f.Hits) + " on filter query: " + f.Query)
+			ff.Filter = append(ff.Filter, f)
+		}
+	}
+	return writeFiltersToFile(ff, file)
+}
+
 func deleteExistingFilters() error {
 	// Get current filters for the user.
 	l, err := api.Users.Settings.Filters.List(gmailUser).Do()
@@ -193,6 +218,17 @@ func deleteExistingFilters() error {
 			return fmt.Errorf("deleting filter id %s failed: %v", f.Id, err)
 		}
 	}
+
+	return nil
+}
+
+func (f *filter) getFilterHits() error {
+
+	messages, err := api.Users.Messages.List(gmailUser).Q(f.Query).Do()
+	if err != nil {
+		return err
+	}
+	f.Hits = len(messages.Messages)
 
 	return nil
 }
