@@ -212,14 +212,20 @@ func getExistingFilters() ([]filter, error) {
 
 	for _, gmailFilter := range gmailFilters.Filter {
 		var f filter
-
+		var isFilterValid bool
+		isFilterValid = false
 		if gmailFilter.Criteria.Query > "" {
 			f.Query = gmailFilter.Criteria.Query
 
 			if gmailFilter.Criteria.To == "me" {
 				f.ToMe = true
 			}
-
+			isFilterValid = true
+		} else if gmailFilter.Criteria.From > "" {
+			f.Query = "from: " + gmailFilter.Criteria.From
+			isFilterValid = true
+		}
+		if isFilterValid && gmailFilter.Action != nil {
 			if len(gmailFilter.Action.AddLabelIds) > 0 {
 				labelID := gmailFilter.Action.AddLabelIds[0]
 				if labelID == "TRASH" {
