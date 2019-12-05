@@ -128,7 +128,7 @@ func (f filter) addFilter(labels *labelMap) error {
 			"criteria": fmt.Sprintf("%#v", fltr.Criteria),
 		}).Debug("adding Gmail filter")
 		if _, err := api.Users.Settings.Filters.Create(gmailUser, &fltr).Do(); err != nil {
-			return fmt.Errorf("creating filter failed: %v", err)
+			return fmt.Errorf("creating filter [%#v] failed: %v", fltr, err)
 		}
 	}
 

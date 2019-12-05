@@ -12,3 +12,5 @@ require (
 	google.golang.org/api v0.0.0-20181229000844-f26a60c56f14
 	google.golang.org/appengine v1.4.0 // indirect
 )
+
+go 1.13
