@@ -28,7 +28,16 @@ type filter struct {
 	ToMe              bool
 	ArchiveUnlessToMe bool
 	Label             string
+	Categorize        string
 	ForwardTo         string
+}
+
+var categoryLabelIDs = map[string]bool{
+	"PERSONAL": true,
+	"SOCIAL": true,
+	"PROMOTIONS": true,
+	"UPDATES": true,
+	"FORUMS": true,
 }
 
 func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
@@ -57,6 +66,18 @@ func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
 			return nil, err
 		}
 		action.AddLabelIds = append(action.AddLabelIds, labelID)
+	}
+
+	if len(f.Categorize) > 0 {
+		category := strings.ToUpper(f.Categorize)
+		if _, present := categoryLabelIDs[category]; !present {
+			validCategories := []string{}
+			for validCategory := range categoryLabelIDs {
+				validCategories = append(validCategories, validCategory)
+			}
+			return nil, errors.New("category \"" + category + "\" is not valid; valid categories are " + strings.Join(validCategories, ", "))
+		}
+		action.AddLabelIds = append(action.AddLabelIds, "CATEGORY_" + category)
 	}
 
 	action.RemoveLabelIds = []string{}
