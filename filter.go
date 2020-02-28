@@ -33,11 +33,11 @@ type filter struct {
 }
 
 var categoryLabelIDs = map[string]bool{
-	"PERSONAL": true,
-	"SOCIAL": true,
+	"PERSONAL":   true,
+	"SOCIAL":     true,
 	"PROMOTIONS": true,
-	"UPDATES": true,
-	"FORUMS": true,
+	"UPDATES":    true,
+	"FORUMS":     true,
 }
 
 func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
@@ -77,7 +77,7 @@ func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
 			}
 			return nil, errors.New("category \"" + category + "\" is not valid; valid categories are " + strings.Join(validCategories, ", "))
 		}
-		action.AddLabelIds = append(action.AddLabelIds, "CATEGORY_" + category)
+		action.AddLabelIds = append(action.AddLabelIds, "CATEGORY_"+category)
 	}
 
 	action.RemoveLabelIds = []string{}

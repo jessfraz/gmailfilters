@@ -108,7 +108,7 @@ func TestFilterToGmailFilters(t *testing.T) {
 		},
 		"categorize": {
 			orig: filter{
-				QueryOr: []string{"to:team_mention@noreply.github.com"},
+				QueryOr:    []string{"to:team_mention@noreply.github.com"},
 				Categorize: "updates",
 			},
 			expected: []gmail.Filter{
