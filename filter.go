@@ -32,6 +32,8 @@ type filter struct {
 	ForwardTo         string
 }
 
+const categoryPrefix = "CATEGORY_"
+
 var categoryLabelIDs = map[string]bool{
 	"PERSONAL":   true,
 	"SOCIAL":     true,
@@ -77,7 +79,7 @@ func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
 			}
 			return nil, errors.New("category \"" + category + "\" is not valid; valid categories are " + strings.Join(validCategories, ", "))
 		}
-		action.AddLabelIds = append(action.AddLabelIds, "CATEGORY_"+category)
+		action.AddLabelIds = append(action.AddLabelIds, categoryPrefix+category)
 	}
 
 	action.RemoveLabelIds = []string{}
@@ -241,10 +243,15 @@ func getExistingFilters() ([]filter, error) {
 				f.ToMe = true
 			}
 
-			if len(gmailFilter.Action.AddLabelIds) > 0 {
-				labelID := gmailFilter.Action.AddLabelIds[0]
+			for _, labelID := range gmailFilter.Action.AddLabelIds {
 				if labelID == "TRASH" {
 					f.Delete = true
+				} else if strings.HasPrefix(labelID, categoryPrefix) {
+					for category := range categoryLabelIDs {
+						if labelID == categoryPrefix+category {
+							f.Categorize = strings.TrimPrefix(labelID, categoryPrefix)
+						}
+					}
 				} else {
 					labelName, ok := labels[labelID]
 					if ok {
