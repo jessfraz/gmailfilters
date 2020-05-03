@@ -29,6 +29,7 @@ type filter struct {
 	ArchiveUnlessToMe bool
 	Label             string
 	ForwardTo         string
+	Star              bool
 }
 
 func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
@@ -70,6 +71,10 @@ func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
 
 	if f.Delete {
 		action.AddLabelIds = append(action.AddLabelIds, "TRASH")
+	}
+
+	if f.Star {
+		action.AddLabelIds = append(action.AddLabelIds, "STARRED")
 	}
 
 	if len(f.ForwardTo) > 0 {

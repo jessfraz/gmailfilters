@@ -106,6 +106,23 @@ func TestFilterToGmailFilters(t *testing.T) {
 				},
 			},
 		},
+		"starred": {
+			orig: filter{
+				QueryOr: []string{"to:plans@tripit.com", "to:receipts@expensify.com"},
+				Star:    true,
+			},
+			expected: []gmail.Filter{
+				{
+					Action: &gmail.FilterAction{
+						AddLabelIds:    []string{"STARRED"},
+						RemoveLabelIds: []string{},
+					},
+					Criteria: &gmail.FilterCriteria{
+						Query: "to:plans@tripit.com OR to:receipts@expensify.com",
+					},
+				},
+			},
+		},
 	}
 
 	labels := &labelMap{
