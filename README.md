@@ -19,9 +19,8 @@ A tool to sync Gmail filters from a config file to your account.
     + [Binaries](#binaries)
     + [Via Go](#via-go)
 - [Usage](#usage)
+- [Getting Started](#getting-started)
 - [Example Filter File](#example-filter-file)
-- [Setup](#setup)
-  * [Gmail](#gmail)
 
 <!-- tocstop -->
 
@@ -33,13 +32,13 @@ For installation instructions from binaries please visit the [Releases Page](htt
 
 #### Via Go
 
-```console
-$ go get github.com/jessfraz/gmailfilters
+```sh
+go get github.com/jessfraz/gmailfilters
 ```
 
 ## Usage
 
-```console
+```sh
 $ gmailfilters -h
 gmailfilters -  A tool to sync Gmail filters from a config file to your account.
 
@@ -57,7 +56,22 @@ Commands:
   version  Show the version information.
 ```
 
-## Example Filter File
+## Getting Started
+
+> Enable the API: To get started using Gmail API, you need to first create a project in the [Google API Console](https://console.developers.google.com), enable the API, and create credentials.
+
+1. Follow the instructions [for step enabling the API here](https://developers.google.com/gmail/api/quickstart/go).
+2. Download `credentials.json` and the setup in step #1 will create a `token.json` file
+3. Create a config file yourself `touch filters.conf` 
+4. Run the following command to export all your existing filter
+
+```sh
+gmailfilters -f credentials.json -t token.json -e filters.conf
+```
+
+Now you are all set to start using the `gmailfilters` project.
+
+## Example Filter File `filters.conf`
 
 ```toml
 [[filter]]
@@ -141,15 +155,3 @@ queryOr = [
 label = "Mailing Lists/xdg-apps"
 archiveUnlessToMe = true
 ```
-
-## Setup
-
-### Gmail
-
-1. Enable the API: To get started using Gmail API, you need to 
-    first create a project in the 
-    [Google API Console](https://console.developers.google.com),
-    enable the API, and create credentials.
-
-    Follow the instructions 
-    [for step enabling the API here](https://developers.google.com/gmail/api/quickstart/go).
