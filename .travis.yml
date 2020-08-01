@@ -5,6 +5,7 @@ go:
 before_install:
   - go get golang.org/x/lint/golint
   - go get honnef.co/go/tools/cmd/staticcheck
+  - go get github.com/campoy/embedmd
 jobs:
   include:
     - script: make all
