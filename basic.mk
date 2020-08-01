@@ -54,7 +54,7 @@ static: prebuild ## Builds a static executable.
 				-tags "$(BUILDTAGS) static_build" \
 				${GO_LDFLAGS_STATIC} -o $(NAME) .
 
-all: clean build fmt lint test staticcheck vet install ## Runs a clean, build, fmt, lint, test, staticcheck, vet and install.
+all: clean build docs fmt lint test staticcheck vet install ## Runs a clean, build, fmt, lint, test, staticcheck, vet and install.
 
 .PHONY: fmt
 fmt: ## Verifies all files have been `gofmt`ed.
@@ -181,6 +181,12 @@ clean: ## Cleanup any build binaries or packages.
 	@echo "+ $@"
 	$(RM) $(NAME)
 	$(RM) -r $(BUILDDIR)
+
+.PHONY: docs
+docs: build ## Generates docs from flags.
+	@./gmailfilters -h > gmailfilters-help.txt 2>&1 || true
+	@embedmd -w *.md
+	@rm -f gmailfilters-help.txt
 
 .PHONY: help
 help:

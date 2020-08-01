@@ -34,11 +34,27 @@ var (
 	export bool
 )
 
+const description = `A tool to sync Gmail filters from a local filter file to your account or export existing ones.
+Examples: 
+
+* Sync filters from filter file: gmailfilters <filter-file-to-import-from.toml>
+* Export your existing filters from gmail: gmailfilters --export <file-to-save-filters-to.toml>
+
+Example Filter file:
+
+[[filter]]
+query = "to:your_activity@noreply.github.com"
+archive = true
+read = true
+
+`
+
 func main() {
 	// Create a new cli program.
 	p := cli.NewProgram()
 	p.Name = "gmailfilters"
-	p.Description = "A tool to sync Gmail filters from a config file to your account"
+	p.Description = description
+
 	// Set the GitCommit and Version.
 	p.GitCommit = version.GITCOMMIT
 	p.Version = version.VERSION

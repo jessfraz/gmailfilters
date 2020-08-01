@@ -4,7 +4,7 @@
 [![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/jessfraz/gmailfilters)
 [![Github All Releases](https://img.shields.io/github/downloads/jessfraz/gmailfilters/total.svg?style=for-the-badge)](https://github.com/jessfraz/gmailfilters/releases)
 
-A tool to sync Gmail filters from a config file to your account.
+A tool to sync Gmail filters from a config file to your account or export existing filters to file.
 
 > **NOTE:** This makes it so the single configuration file is the only way to
    add filters to your account, meaning if you add a filter via the UI and do not
@@ -39,9 +39,20 @@ $ go get github.com/jessfraz/gmailfilters
 
 ## Usage
 
+[embedmd]:# (gmailfilters-help.txt console)
 ```console
-$ gmailfilters -h
-gmailfilters -  A tool to sync Gmail filters from a config file to your account.
+gmailfilters -  A tool to sync Gmail filters from a local filter file to your account or export existing ones.
+Examples: 
+
+* Sync filters from filter file: gmailfilters <filter-file-to-import-from.toml>
+* Export your existing filters from gmail: gmailfilters --export <file-to-save-filters-to.toml>
+
+Example Filter file:
+
+[[filter]]
+query = "to:your_activity@noreply.github.com"
+archive = true
+read = true.
 
 Usage: gmailfilters <command>
 
@@ -55,6 +66,7 @@ Flags:
 Commands:
 
   version  Show the version information.
+
 ```
 
 ## Example Filter File
