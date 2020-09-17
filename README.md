@@ -1,6 +1,7 @@
 # gmailfilters
 
-[![Travis CI](https://img.shields.io/travis/jessfraz/gmailfilters.svg?style=for-the-badge)](https://travis-ci.org/jessfraz/gmailfilters)
+[![make-all](https://github.com/jessfraz/gmailfilters/workflows/make%20all/badge.svg)](https://github.com/jessfraz/gmailfilters/actions?query=workflow%3A%22make+all%22)
+[![make-image](https://github.com/jessfraz/gmailfilters/workflows/make%20image/badge.svg)](https://github.com/jessfraz/gmailfilters/actions?query=workflow%3A%22make+image%22)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/jessfraz/gmailfilters)
 [![Github All Releases](https://img.shields.io/github/downloads/jessfraz/gmailfilters/total.svg?style=for-the-badge)](https://github.com/jessfraz/gmailfilters/releases)
 
