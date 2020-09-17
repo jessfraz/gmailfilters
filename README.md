@@ -1,3 +1,17 @@
+# gmailfilters
+
+[![make-all](https://github.com/jessfraz/gmailfilters/workflows/make%20all/badge.svg)](https://github.com/jessfraz/gmailfilters/actions?query=workflow%3A%22make+all%22)
+[![make-image](https://github.com/jessfraz/gmailfilters/workflows/make%20image/badge.svg)](https://github.com/jessfraz/gmailfilters/actions?query=workflow%3A%22make+image%22)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/jessfraz/gmailfilters)
+[![Github All Releases](https://img.shields.io/github/downloads/jessfraz/gmailfilters/total.svg?style=for-the-badge)](https://github.com/jessfraz/gmailfilters/releases)
+
+A tool to sync Gmail filters from a config file to your account.
+
+> **NOTE:** This makes it so the single configuration file is the only way to
+   add filters to your account, meaning if you add a filter via the UI and do not
+   also add it in your config file, the next time you run this tool on your
+   outdated config, the filter you added _only_ in the UI will be deleted.
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
@@ -13,33 +27,6 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# gmailfilters
-
-[![make-all](https://github.com/jessfraz/gmailfilters/workflows/make%20all/badge.svg)](https://github.com/jessfraz/gmailfilters/actions?query=workflow%3A%22make+all%22)
-[![make-image](https://github.com/jessfraz/gmailfilters/workflows/make%20image/badge.svg)](https://github.com/jessfraz/gmailfilters/actions?query=workflow%3A%22make+image%22)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/jessfraz/gmailfilters)
-[![Github All Releases](https://img.shields.io/github/downloads/jessfraz/gmailfilters/total.svg?style=for-the-badge)](https://github.com/jessfraz/gmailfilters/releases)
-
-A tool to sync Gmail filters from a config file to your account.
-
-> **NOTE:** This makes it so the single configuration file is the only way to
-   add filters to your account, meaning if you add a filter via the UI and do not
-   also add it in your config file, the next time you run this tool on your
-   outdated config, the filter you added _only_ in the UI will be deleted.
-
-**Table of Contents**
-
-<!-- toc -->
-
-- [Installation](#installation)
-    + [Binaries](#binaries)
-    + [Via Go](#via-go)
-- [Usage](#usage)
-- [Example Filter File](#example-filter-file)
-- [Setup](#setup)
-  * [Gmail](#gmail)
-
-<!-- tocstop -->
 
 ## Installation
 

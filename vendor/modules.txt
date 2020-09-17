@@ -18,8 +18,8 @@ github.com/sirupsen/logrus
 # golang.org/x/crypto v0.0.0-20180904163835-0709b304e793
 golang.org/x/crypto/ssh/terminal
 # golang.org/x/net v0.0.0-20181220203305-927f97764cc3
-golang.org/x/net/context/ctxhttp
 golang.org/x/net/context
+golang.org/x/net/context/ctxhttp
 # golang.org/x/oauth2 v0.0.0-20181203162652-d668ce993890
 golang.org/x/oauth2
 golang.org/x/oauth2/google
@@ -30,18 +30,18 @@ golang.org/x/oauth2/jwt
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 # google.golang.org/api v0.0.0-20181229000844-f26a60c56f14
-google.golang.org/api/gmail/v1
 google.golang.org/api/gensupport
+google.golang.org/api/gmail/v1
 google.golang.org/api/googleapi
 google.golang.org/api/googleapi/internal/uritemplates
 # google.golang.org/appengine v1.4.0
 google.golang.org/appengine
-google.golang.org/appengine/urlfetch
 google.golang.org/appengine/internal
 google.golang.org/appengine/internal/app_identity
-google.golang.org/appengine/internal/modules
-google.golang.org/appengine/internal/urlfetch
 google.golang.org/appengine/internal/base
 google.golang.org/appengine/internal/datastore
 google.golang.org/appengine/internal/log
+google.golang.org/appengine/internal/modules
 google.golang.org/appengine/internal/remote_api
+google.golang.org/appengine/internal/urlfetch
+google.golang.org/appengine/urlfetch
