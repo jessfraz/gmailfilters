@@ -1,3 +1,18 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [gmailfilters](#gmailfilters)
+  - [Installation](#installation)
+      - [Binaries](#binaries)
+      - [Via Go](#via-go)
+  - [Usage](#usage)
+  - [Example Filter File](#example-filter-file)
+  - [Setup](#setup)
+    - [Gmail](#gmail)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # gmailfilters
 
 [![make-all](https://github.com/jessfraz/gmailfilters/workflows/make%20all/badge.svg)](https://github.com/jessfraz/gmailfilters/actions?query=workflow%3A%22make+all%22)
