@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -213,35 +214,60 @@ func getExistingFilters() ([]filter, error) {
 	for _, gmailFilter := range gmailFilters.Filter {
 		var f filter
 
-		if gmailFilter.Criteria.Query > "" {
-			f.Query = gmailFilter.Criteria.Query
-
-			if gmailFilter.Criteria.To == "me" {
-				f.ToMe = true
+		var criteria []string
+		if gmailFilter.Criteria.Query != "" {
+			criteria = append(criteria, "("+gmailFilter.Criteria.Query+")")
+		}
+		if gmailFilter.Criteria.ExcludeChats {
+			criteria = append(criteria, "-is:chat")
+		}
+		if gmailFilter.Criteria.From != "" {
+			criteria = append(criteria, "from:("+gmailFilter.Criteria.From+")")
+		}
+		if gmailFilter.Criteria.HasAttachment {
+			criteria = append(criteria, "has:attachment")
+		}
+		if gmailFilter.Criteria.NegatedQuery != "" {
+			criteria = append(criteria, "-("+gmailFilter.Criteria.NegatedQuery+")")
+		}
+		if gmailFilter.Criteria.Size > 0 {
+			comp := "larger:"
+			if gmailFilter.Criteria.SizeComparison == "smaller" {
+				comp = "smaller:"
 			}
+			criteria = append(criteria, comp+strconv.FormatInt(gmailFilter.Criteria.Size, 10))
+		}
+		if gmailFilter.Criteria.Subject != "" {
+			criteria = append(criteria, "subject:("+gmailFilter.Criteria.Subject+")")
+		}
+		if gmailFilter.Criteria.To == "me" {
+			f.ToMe = true
+		} else if gmailFilter.Criteria.To != "" {
+			criteria = append(criteria, "to:("+gmailFilter.Criteria.To+")")
+		}
+		f.Query = strings.Join(criteria, " ")
 
-			if len(gmailFilter.Action.AddLabelIds) > 0 {
-				labelID := gmailFilter.Action.AddLabelIds[0]
-				if labelID == "TRASH" {
-					f.Delete = true
-				} else {
-					labelName, ok := labels[labelID]
-					if ok {
-						f.Label = labelName
-					}
+		if len(gmailFilter.Action.AddLabelIds) > 0 {
+			labelID := gmailFilter.Action.AddLabelIds[0]
+			if labelID == "TRASH" {
+				f.Delete = true
+			} else {
+				labelName, ok := labels[labelID]
+				if ok {
+					f.Label = labelName
 				}
 			}
+		}
 
-			if len(gmailFilter.Action.RemoveLabelIds) > 0 {
-				for _, labelID := range gmailFilter.Action.RemoveLabelIds {
-					if labelID == "UNREAD" {
-						f.Read = true
-					} else if labelID == "INBOX" {
-						if gmailFilter.Criteria.NegatedQuery == "to:me" {
-							f.ArchiveUnlessToMe = true
-						} else {
-							f.Archive = true
-						}
+		if len(gmailFilter.Action.RemoveLabelIds) > 0 {
+			for _, labelID := range gmailFilter.Action.RemoveLabelIds {
+				if labelID == "UNREAD" {
+					f.Read = true
+				} else if labelID == "INBOX" {
+					if gmailFilter.Criteria.NegatedQuery == "to:me" {
+						f.ArchiveUnlessToMe = true
+					} else {
+						f.Archive = true
 					}
 				}
 			}
