@@ -213,6 +213,10 @@ func getExistingFilters() ([]filter, error) {
 	for _, gmailFilter := range gmailFilters.Filter {
 		var f filter
 
+		if gmailFilter.Action == nil {
+			continue
+		}
+
 		if gmailFilter.Criteria.Query > "" {
 			f.Query = gmailFilter.Criteria.Query
 
