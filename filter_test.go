@@ -106,6 +106,41 @@ func TestFilterToGmailFilters(t *testing.T) {
 				},
 			},
 		},
+		"always mark important": {
+			orig: filter{
+				Query:               "list:coreos-dev@googlegroups.com",
+				AlwaysMarkImportant: true,
+				Label:               "Mailing Lists/coreos-dev",
+			},
+			expected: []gmail.Filter{
+				{
+					Action: &gmail.FilterAction{
+						AddLabelIds:    []string{"1", "IMPORTANT"},
+						RemoveLabelIds: []string{},
+					},
+					Criteria: &gmail.FilterCriteria{
+						Query: "list:coreos-dev@googlegroups.com",
+					},
+				},
+			},
+		},
+		"never mark important": {
+			orig: filter{
+				Query:              "to:plans@tripit.com",
+				NeverMarkImportant: true,
+			},
+			expected: []gmail.Filter{
+				{
+					Action: &gmail.FilterAction{
+						AddLabelIds:    []string{},
+						RemoveLabelIds: []string{"IMPORTANT"},
+					},
+					Criteria: &gmail.FilterCriteria{
+						Query: "to:plans@tripit.com",
+					},
+				},
+			},
+		},
 	}
 
 	labels := &labelMap{

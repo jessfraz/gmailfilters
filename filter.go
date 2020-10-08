@@ -20,15 +20,17 @@ type filterfile struct {
 
 // filter defines a filter object.
 type filter struct {
-	Query             string
-	QueryOr           []string
-	Archive           bool
-	Read              bool
-	Delete            bool
-	ToMe              bool
-	ArchiveUnlessToMe bool
-	Label             string
-	ForwardTo         string
+	Query               string
+	QueryOr             []string
+	Archive             bool
+	Read                bool
+	Delete              bool
+	ToMe                bool
+	ArchiveUnlessToMe   bool
+	Label               string
+	ForwardTo           string
+	AlwaysMarkImportant bool
+	NeverMarkImportant  bool
 }
 
 func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
@@ -44,6 +46,10 @@ func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
 
 	if len(f.Query) < 1 {
 		return nil, errors.New("query or queryOr cannot be empty")
+	}
+
+	if f.AlwaysMarkImportant && f.NeverMarkImportant {
+		return nil, errors.New("cannot always and never mark a message important")
 	}
 
 	action := gmail.FilterAction{
@@ -70,6 +76,14 @@ func (f filter) toGmailFilters(labels *labelMap) ([]gmail.Filter, error) {
 
 	if f.Delete {
 		action.AddLabelIds = append(action.AddLabelIds, "TRASH")
+	}
+
+	if f.AlwaysMarkImportant {
+		action.AddLabelIds = append(action.AddLabelIds, "IMPORTANT")
+	}
+
+	if f.NeverMarkImportant {
+		action.RemoveLabelIds = append(action.RemoveLabelIds, "IMPORTANT")
 	}
 
 	if len(f.ForwardTo) > 0 {
@@ -221,13 +235,16 @@ func getExistingFilters() ([]filter, error) {
 			}
 
 			if len(gmailFilter.Action.AddLabelIds) > 0 {
-				labelID := gmailFilter.Action.AddLabelIds[0]
-				if labelID == "TRASH" {
-					f.Delete = true
-				} else {
-					labelName, ok := labels[labelID]
-					if ok {
-						f.Label = labelName
+				for _, labelID := range gmailFilter.Action.AddLabelIds {
+					if labelID == "TRASH" {
+						f.Delete = true
+					} else if labelID == "IMPORTANT" {
+						f.AlwaysMarkImportant = true
+					} else {
+						labelName, ok := labels[labelID]
+						if ok {
+							f.Label = labelName
+						}
 					}
 				}
 			}
@@ -236,6 +253,8 @@ func getExistingFilters() ([]filter, error) {
 				for _, labelID := range gmailFilter.Action.RemoveLabelIds {
 					if labelID == "UNREAD" {
 						f.Read = true
+					} else if labelID == "IMPORTANT" {
+						f.NeverMarkImportant = true
 					} else if labelID == "INBOX" {
 						if gmailFilter.Criteria.NegatedQuery == "to:me" {
 							f.ArchiveUnlessToMe = true
