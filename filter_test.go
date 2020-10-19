@@ -106,6 +106,23 @@ func TestFilterToGmailFilters(t *testing.T) {
 				},
 			},
 		},
+		"categorize": {
+			orig: filter{
+				QueryOr:    []string{"to:team_mention@noreply.github.com"},
+				Categorize: "updates",
+			},
+			expected: []gmail.Filter{
+				{
+					Action: &gmail.FilterAction{
+						AddLabelIds:    []string{"CATEGORY_UPDATES"},
+						RemoveLabelIds: []string{},
+					},
+					Criteria: &gmail.FilterCriteria{
+						Query: "to:team_mention@noreply.github.com",
+					},
+				},
+			},
+		},
 	}
 
 	labels := &labelMap{

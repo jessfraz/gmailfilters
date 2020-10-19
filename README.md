@@ -86,6 +86,7 @@ to:team_mention@noreply.github.com \
 -to:assign@noreply.github.com
 """
 label = "github/team-mention"
+categorize = "updates"
 
 [[filter]]
 query = """
