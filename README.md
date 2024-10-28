@@ -36,7 +36,7 @@ For installation instructions from binaries please visit the [Releases Page](htt
 #### Via Go
 
 ```console
-$ go get github.com/jessfraz/gmailfilters
+go install github.com/jessfraz/gmailfilters@latest
 ```
 
 ## Usage
