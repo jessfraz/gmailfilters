@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: make all
-        uses: docker://golang:latest
+        uses: docker://golang:1.26.10
         with:
           entrypoint: bash
-          args: -c "go get honnef.co/go/tools/cmd/staticcheck && go get golang.org/x/lint/golint && git checkout . && make all"
+          args: -c "go install honnef.co/go/tools/cmd/staticcheck@v0.8.2 && go install golang.org/x/lint/golint@v0.0.0-20241112194109-818c5a804067 && make all"
