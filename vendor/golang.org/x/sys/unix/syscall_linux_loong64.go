@@ -3,7 +3,6 @@
 // license that can be found in the LICENSE file.
 
 //go:build loong64 && linux
-// +build loong64,linux
 
 package unix
 
@@ -28,7 +27,7 @@ func Select(nfd int, r *FdSet, w *FdSet, e *FdSet, timeout *Timeval) (n int, err
 	if timeout != nil {
 		ts = &Timespec{Sec: timeout.Sec, Nsec: timeout.Usec * 1000}
 	}
-	return Pselect(nfd, r, w, e, ts, nil)
+	return pselect6(nfd, r, w, e, ts, nil)
 }
 
 //sys	sendfile(outfd int, infd int, offset *int64, count int) (written int, err error)
@@ -126,11 +125,6 @@ func Getrlimit(resource int, rlim *Rlimit) (err error) {
 	return
 }
 
-func Setrlimit(resource int, rlim *Rlimit) (err error) {
-	err = Prlimit(0, resource, rlim, nil)
-	return
-}
-
 func futimesat(dirfd int, path string, tv *[2]Timeval) (err error) {
 	if tv == nil {
 		return utimensat(dirfd, path, nil, 0)
@@ -156,6 +150,9 @@ func Time(t *Time_t) (Time_t, error) {
 }
 
 func Utime(path string, buf *Utimbuf) error {
+	if buf == nil {
+		return Utimes(path, nil)
+	}
 	tv := []Timeval{
 		{Sec: buf.Actime},
 		{Sec: buf.Modtime},
@@ -220,3 +217,5 @@ func KexecFileLoad(kernelFd int, initrdFd int, cmdline string, flags int) error 
 	}
 	return kexecFileLoad(kernelFd, initrdFd, cmdlineLen, cmdline, flags)
 }
+
+const SYS_FSTATAT = SYS_NEWFSTATAT
