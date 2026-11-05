@@ -4,10 +4,14 @@ jobs:
   makeall:
     name: make all
     runs-on: ubuntu-latest
+    env:
+      GOTOOLCHAIN: go1.26.10
     steps:
       - uses: actions/checkout@master
       - name: make all
-        uses: docker://golang:latest
-        with:
-          entrypoint: bash
-          args: -c "go get honnef.co/go/tools/cmd/staticcheck && go get golang.org/x/lint/golint && git checkout . && make all"
+        shell: bash
+        run: |
+          go version
+          go install honnef.co/go/tools/cmd/staticcheck@v0.8.2
+          go install golang.org/x/lint/golint@v0.0.0-20241112194109-818c5a804067
+          make all
