@@ -53,6 +53,7 @@ Flags:
   -e, --export      export existing filters (default: false)
   -f, --creds-file  Gmail credential file (or env var GMAIL_CREDENTIAL_FILE) (default: <none>)
   -t, --token-file  Gmail oauth token file (default: /tmp/token.json)
+  -h, --export-hits Evaluate filters against inbox to count hits
 
 Commands:
 

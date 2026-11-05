@@ -32,6 +32,8 @@ var (
 	debug bool
 
 	export bool
+
+	exporthits bool
 )
 
 func main() {
@@ -50,6 +52,9 @@ func main() {
 
 	p.FlagSet.BoolVar(&export, "e", false, "export existing filters")
 	p.FlagSet.BoolVar(&export, "export", false, "export existing filters")
+
+	p.FlagSet.BoolVar(&exporthits, "h", false, "export existing filter hit counts")
+	p.FlagSet.BoolVar(&exporthits, "export-hits", false, "export existing filter hit counts")
 
 	p.FlagSet.StringVar(&credsFile, "creds-file", os.Getenv("GMAIL_CREDENTIAL_FILE"), "Gmail credential file (or env var GMAIL_CREDENTIAL_FILE)")
 	p.FlagSet.StringVar(&credsFile, "f", os.Getenv("GMAIL_CREDENTIAL_FILE"), "Gmail credential file (or env var GMAIL_CREDENTIAL_FILE)")
@@ -84,7 +89,8 @@ func main() {
 			// Manage labels.
 			gmail.GmailLabelsScope,
 			// Read, modify, and manage your settings.
-			gmail.GmailSettingsBasicScope)
+			gmail.GmailSettingsBasicScope,
+			gmail.GmailReadonlyScope)
 		if err != nil {
 			return fmt.Errorf("parsing client secret file to config failed: %v", err)
 		}
@@ -122,6 +128,10 @@ func main() {
 
 		if export {
 			return exportExistingFilters(args[0])
+		}
+
+		if exporthits {
+			return exportExistingFilterHits(args[0])
 		}
 
 		labels, err := getLabelMap()
